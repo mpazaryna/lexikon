@@ -2,17 +2,7 @@ import { join } from "https://deno.land/std@0.217.0/path/mod.ts";
 import { ensureDir } from "https://deno.land/std@0.217.0/fs/mod.ts";
 import { createProvider } from "../llm/factory.ts";
 import { loadFile } from "../context/handler.ts";
-import { LLMProvider } from "../llm/providers/types.ts";
-
-export interface BaseGeneratorOptions {
-  provider: string;
-  temperature?: number;
-  maxTokens?: number;
-  model?: string;
-  template?: string;
-  templatePath?: string;
-  outputFile: string;
-}
+import { BaseGeneratorOptions, ProviderType } from "../../types.ts";
 
 export abstract class BaseGenerator {
   protected options: BaseGeneratorOptions;
@@ -54,7 +44,7 @@ export abstract class BaseGenerator {
     // Initialize LLM
     const { provider, temperature, maxTokens, model } = this.options;
     console.log(`🤖 Initializing ${provider.toUpperCase()}...`);
-    const llm = createProvider(provider as LLMProvider, { 
+    const llm = createProvider(provider as ProviderType, { 
       temperature, 
       maxTokens,
       ...(model ? { model } : {})

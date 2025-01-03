@@ -1,4 +1,4 @@
-import { LLMConfig, LLMResponse, LLMError } from "./types.ts";
+import { LLMConfig, LLMResponse, LLMError } from "../../../types.ts";
 
 const defaultConfig = {
   model: "gemini-pro",
@@ -68,9 +68,9 @@ export const generateContent = async (
     return {
       content: data.candidates[0].content.parts[0].text,
       usage: {
-        prompt_tokens: 0, // Gemini doesn't provide token counts
-        completion_tokens: 0,
-        total_tokens: 0
+        promptTokens: 0,
+        completionTokens: 0,
+        totalTokens: 0
       }
     };
   } catch (error) {

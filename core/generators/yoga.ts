@@ -1,10 +1,5 @@
-import { BaseGenerator, BaseGeneratorOptions } from "./base.ts";
-
-export interface YogaGeneratorOptions extends Omit<BaseGeneratorOptions, 'outputFile'> {
-  level?: string;
-  duration?: string;
-  focus?: string;
-}
+import { YogaGeneratorOptions } from "../../types.ts";
+import { BaseGenerator } from "./base.ts";
 
 export class YogaGenerator extends BaseGenerator {
   protected options: YogaGeneratorOptions & { outputFile: string };

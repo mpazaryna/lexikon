@@ -1,10 +1,7 @@
-import { BaseGenerator, BaseGeneratorOptions } from "./base.ts";
 import { join, dirname, fromFileUrl } from "https://deno.land/std@0.217.0/path/mod.ts";
 import { loadFile } from "../context/handler.ts";
-
-export interface StoryGeneratorOptions extends Omit<BaseGeneratorOptions, 'outputFile'> {
-  concept?: string;  // Optional now as it can be read from file
-}
+import { StoryGeneratorOptions } from "../../types.ts";
+import { BaseGenerator } from "./base.ts";
 
 export class StoryGenerator extends BaseGenerator {
   protected options: StoryGeneratorOptions & { outputFile: string };

@@ -1,4 +1,4 @@
-import { LLMConfig, LLMResponse, LLMError } from "./types.ts";
+import { LLMConfig, LLMResponse, LLMError } from "../../../types.ts";
 
 const defaultConfig = {
   model: "claude-3-sonnet-20240229",

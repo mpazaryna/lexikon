@@ -1,10 +1,8 @@
-import { LLMConfig, LLMProvider } from "./providers/types.ts";
+import { LLMConfig, LLMProvider, ProviderType } from "../../types.ts";
 import * as claude from "./providers/claude.ts";
 import * as openai from "./providers/openai.ts";
 import * as groq from "./providers/groq.ts";
 import * as gemini from "./providers/gemini.ts";
-
-export type ProviderType = "claude" | "openai" | "groq" | "gemini";
 
 export const createProvider = (type: ProviderType, config: Partial<LLMConfig> = {}): LLMProvider => {
   const providers = {
