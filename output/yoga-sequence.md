@@ -1,91 +1,80 @@
-# Class Overview
+### Yoga Sequence for Strength and Flexibility
 
-This class is designed around the foundational principles of Hatha Yoga, focusing on building both strength and flexibility within a beginner-friendly framework. The practice will incorporate traditional poses (asanas), breath work (pranayama), and meditation to create a holistic yoga experience. The main benefits include improved muscle tone, enhanced range of motion, and increased mental clarity. This class is ideal for beginners or those looking to refine their practice with a focus on alignment and breath control. Expected outcomes include a deeper understanding of basic poses, improved posture, and a foundational knowledge of yoga philosophy.
+#### 1. Opening (5-10 minutes)
 
-## Class Structure
+- **Centering and Breath Awareness**
+  - **Pose:** Sukhasana (Easy Pose)
+  - **Alignment Points:** Sit with a straight spine, cross-legged. Hands rest on the knees. Close your eyes.
+  - **Modifications:** Sit on a cushion or folded blanket for hip elevation.
+  - **Breath Guidance:** Deep, slow inhales and exhales through the nose. Focus on expanding the abdomen and chest.
+  - **Transition:** Gradually deepen your breath, becoming aware of the present moment.
 
-* Total Duration: 60 minutes
-* Level: Beginner
-* Props Needed: Yoga mat, blocks, straps, bolsters
-* Room Setup: Quiet, well-ventilated space with mats laid out facing the instructor
+- **Gentle Warm-Up Movements**
+  - **Pose:** Marjaryasana-Bitilasana (Cat-Cow Stretch)
+  - **Alignment Points:** On all fours, wrists under shoulders, knees under hips. Inhale, arch the back (Cow), exhale, round the spine (Cat).
+  - **Modifications:** Place a folded blanket under knees for comfort.
+  - **Breath Guidance:** Inhale into Cow, exhale into Cat. Fluid motion in sync with breath.
+  - **Transition:** Return to a neutral spine, preparing for the next movement.
 
-## Sequence Breakdown
+- **Setting Intention**
+  - Stay in a seated or kneeling position.
+  - Reflect on a personal intention for your practice today. It could be cultivating strength, flexibility, or inner peace.
 
-### Opening (5-10 minutes)
+#### 2. Sun Salutations (10-15 minutes)
 
-* Begin with a centering technique: Seated comfortably, close the eyes and notice the breath.
-* Initial breath work: Deep inhales and exhales through the nose to calm the mind.
-* Setting intention: Reflect on a personal goal for the practice.
+- **Surya Namaskar (Sun Salutation)**
+  - **Progressive Build-Up:** Begin with a simplified version, focusing on the flow between poses. Gradually add more challenging variations like lunges and Chaturanga Dandasana (Four-Limbed Staff Pose).
+  - **Variations:** Introduce Anjaneyasana (Low Lunge) for a deeper stretch in the hips.
+  - **Breath Guidance:** Inhale as you extend or lift the body, exhale as you fold or lower.
+  - **Transition:** Flow seamlessly from one pose to the next, using breath as your guide.
 
-### Warm-Up (10-15 minutes)
+#### 3. Standing Poses (15-20 minutes)
 
-* Joints and mobility work:
-  * Neck rolls
-  * Shoulder rolls
-  * Wrist rotations
-* Gentle stretches:
-  * Cat-Cow Pose (Marjaryasana-Bitilasana) for spinal flexibility
-  * Child’s Pose (Balasana) to stretch the back
-* Basic strength activation:
-  * Plank Pose (Phalakasana) for core and arm strength
-  * Downward-Facing Dog (Adho Mukha Svanasana) to warm up the body
+- **Vrksasana (Tree Pose)**
+  - **Alignment Points:** Stand on one foot, place the other foot's sole inside the standing leg's thigh. Hands in prayer position at heart center or raised above the head.
+  - **Modifications:** Foot can be placed on the calf instead of the thigh but avoid the knee. Use a wall for balance if needed.
+  - **Breath Guidance:** Steady, even breaths. Focus on a point in front of you for balance.
 
-### Main Practice (25-30 minutes)
+- **Virabhadrasana II (Warrior II Pose)**
+  - **Alignment Points:** Front foot facing forward, back foot perpendicular. Bend the front knee directly over the ankle. Arms extended out in line with shoulders.
+  - **Modifications:** Adjust the stance width for comfort. Use a block under the hand in extended side angle variation.
+  - **Breath Guidance:** Deep, controlled breaths. Maintain focus and strength.
 
-* Mountain Pose (Tadasana): Grounding, focus on foot alignment, breath deep. Hold for 5 breaths.
-* Warrior II (Virabhadrasana II): Leg strength, align knee over ankle, gaze over front hand. Transition into Triangle Pose (Trikonasana) by straightening the front leg and reaching forward, tilt from the pelvis. Hold each for 5 breaths.
-* Tree Pose (Vrksasana): Balance, focus on a point, foot presses thigh, hands to heart. Hold for 5 breaths each side.
-* Bridge Pose (Setu Bandhasana): Back and leg strength, press feet, lift hips, clasp hands under body. Hold for 5 breaths.
-* Seated Forward Bend (Paschimottanasana): Flexibility, extend spine, reach for feet, breathe into stretch. Hold for 5 breaths.
+#### 4. Floor Work (15-20 minutes)
 
-### Cool Down (10-15 minutes)
+- **Baddha Konasana (Bound Angle Pose)**
+  - **Alignment Points:** Sit with soles of the feet touching, knees bent outwards. Hold feet or ankles, hinge forward from hips for a deeper stretch.
+  - **Modifications:** Sit on a cushion for hip elevation. Place blocks under knees for support.
+  - **Breath Guidance:** Inhale to lengthen the spine, exhale to deepen the forward bend.
 
-* Supine Hand-To-Big-Toe Pose (Supta Padangusthasana) using a strap for hamstring stretch. Hold for 5 breaths each side.
-* Supine Twist (Supta Matsyendrasana) for spinal rotation and relaxation. Hold for 5 breaths each side.
-* Recovery positions:
-  * Legs-Up-The-Wall Pose (Viparita Karani) with bolster under hips for relaxation. Hold for 5 minutes.
+- **Ardha Matsyendrasana (Half Lord of the Fishes Pose)**
+  - **Alignment Points:** Sit with legs extended. Bend one knee, foot outside opposite thigh. Twist towards the bent knee, placing the opposite elbow outside the knee.
+  - **Modifications:** Keep the bottom leg straight or slightly bent if twisting is too intense.
+  - **Breath Guidance:** Inhale to lengthen the spine, exhale to deepen the twist.
 
-### Closing (5-10 minutes)
+- **Navasana (Boat Pose)**
+  - **Alignment Points:** Balance on the sitting bones, legs lifted into a V shape. Arms extended forward.
+  - **Modifications:** Bend knees if necessary. Hold the back of the thighs for support.
+  - **Breath Guidance:** Steady breaths, focus on engaging the core.
 
-* Final relaxation in Corpse Pose (Savasana) for 5-7 minutes with guided meditation focusing on releasing tension from the body and observing the breath.
-* Integration practice: Brief sharing of the experience or silent reflection on the intention set at the beginning.
+#### 5. Cool Down (10-15 minutes)
 
-## Key Teaching Points
+- **Supta Baddha Konasana (Reclining Bound Angle Pose)**
+  - **Alignment Points:** Lying on the back, soles of the feet together, knees open to the sides. Arms relaxed by sides.
+  - **Modifications:** Place blocks or pillows under knees for support.
+  - **Breath Guidance:** Deep, relaxing breaths, allowing the body to sink into the ground.
 
-### ALIGNMENT CUES
+- **Savasana (Corpse Pose)**
+  - **Alignment Points:** Lie flat on your back, legs slightly apart, arms relaxed at your sides, palms facing up. Close your eyes.
+  - **Modifications:** Place a bolster under knees or a blanket under the head for comfort.
+  - **Breath Guidance:** Let your breath return to its natural rhythm. Allow your body to feel heavy and relaxed.
 
-* Mountain Pose (Tadasana): Feet hip-width apart, engage thighs, lengthen spine. Stand tall, rooted yet light.
-* Warrior II (Virabhadrasana II): Front knee over ankle, back foot grounded, open hips, extend arms.
-* Tree Pose (Vrksasana): Press standing foot, open hip, hands to heart. Balance, breathe, blossom.
+- **Closing Meditation**
+  - Remain in Savasana. Reflect on your practice and the fulfillment of your intention. Gradually bring awareness back to your breath, then to small movements in fingers and toes, awakening the body.
 
-### BREATHING GUIDANCE
+### Additional Considerations
 
-* Opening: Inhale deeply to fill the lungs, exhale slowly to calm the mind. Find rhythm.
-* Main Practice: Inhale to prepare or extend, exhale to deepen or release. Breath guides movement.
-* Closing: Deep inhales through the nose, long exhales through the mouth. Release all tension.
-
-### MODIFICATIONS
-
-* Use blocks under hands in Triangle Pose (Trikonasana) for stability and alignment. Adjust as needed.
-* Strap around the foot in Seated Forward Bend (Paschimottanasana) aids reach, supports spine.
-* Bolster under knees in Savasana for lower back comfort. Customize for relaxation.
-
-### SAFETY NOTES
-
-* Avoid locking knees in standing poses. Keep a micro-bend for stability.
-* In twists, move from the base of the spine. Protect the back by moving gently.
-* Keep neck neutral in poses to avoid strain. Align with the spine's natural curve.
-
-### SPIRITUAL ASPECTS
-
-* Mountain Pose (Tadasana) embodies steadiness and connection to the earth. Stand in your power.
-* Warrior II (Virabhadrasana II) represents inner strength and the courage to face life's battles.
-* Tree Pose (Vrksasana) symbolizes growth and balance. Rooted in the earth, reaching for the sky.
-
-## Common Challenges
-
-* Physical limitations: Use props for support and alignment. Encourage listening to one’s body.
-* Breathing coordination: Remind to breathe with movement. Practice makes progress.
-* Balance and stability: Focus on a point (Drishti). Use wall or chair for support.
-
-This class plan integrates traditional yoga principles with creative elements designed to deepen the sensory experience, enhance engagement, and provide unique learning moments, ensuring a memorable and transformative practice for beginners.
+- **Safety Precautions:** Always maintain alignment to prevent injury. Do not push your body beyond its limits. Use props for support and stability.
+- **Props Needed:** Yoga mat, blocks, bolster, blanket.
+- **Benefits:** This sequence is designed to build strength and flexibility, enhance balance, and promote a sense of inner calm.
+- **Energy Flow:** The sequence starts with grounding and centering poses, builds up energy through Sun Salutations and standing poses, shifts towards introspection and focus during floor work, and ends with relaxation and meditation to integrate the practice.

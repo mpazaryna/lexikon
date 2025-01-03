@@ -25,18 +25,30 @@ export const generateContent = async (
   prompt: string, 
   config: Partial<LLMConfig> = {}
 ): Promise<LLMResponse> => {
+  console.log("📡 Preparing Claude API request...");
+  
   const apiKey = config.apiKey ?? Deno.env.get("ANTHROPIC_API_KEY");
-  if (!apiKey) throw { code: "NO_API_KEY", message: "Missing API key" };
+  if (!apiKey) {
+    console.error("❌ No API key found!");
+    throw { code: "NO_API_KEY", message: "Missing API key" };
+  }
 
   const mergedConfig = { ...defaultConfig, ...config };
+  console.log("⚙️  Using configuration:", {
+    model: mergedConfig.model,
+    maxTokens: mergedConfig.maxTokens,
+    temperature: mergedConfig.temperature
+  });
   
   try {
+    console.log("🔄 Sending request to Claude API...");
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: createHeaders(apiKey),
       body: JSON.stringify({
         model: mergedConfig.model,
         max_tokens: mergedConfig.maxTokens,
+        temperature: mergedConfig.temperature,
         system: "You are a creative writing assistant. Provide complete, detailed responses.",
         messages: [{ 
           role: "user", 
@@ -45,14 +57,19 @@ export const generateContent = async (
       })
     });
 
-    if (!response.ok) handleError(await response.text());
+    if (!response.ok) {
+      console.error("❌ API request failed:", await response.text());
+      handleError(await response.text());
+    }
     
+    console.log("✅ Received successful response from Claude");
     const data = await response.json();
     return {
       content: data.content[0].text,
       usage: data.usage
     };
   } catch (error) {
+    console.error("❌ Error during API call:", error);
     handleError(error);
   }
 };

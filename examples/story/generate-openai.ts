@@ -1,20 +1,59 @@
-import { createProvider } from "../../core/llm/factory.ts";
-import { loadFile } from "../../core/context/handler.ts";
-import { join, fromFileUrl, dirname } from "https://deno.land/std/path/mod.ts";
-import { ensureDir } from "https://deno.land/std/fs/mod.ts";
+import { generateStory } from "../../core/generators/story.ts";
+import { join, dirname, fromFileUrl } from "https://deno.land/std@0.217.0/path/mod.ts";
 
-const currentDir = dirname(fromFileUrl(import.meta.url));
-const templatePath = join(currentDir, "templates", "hero-journey.txt");
+async function example1() {
+  console.log("Running Example 1: Using template file and concept.txt");
+  const templatePath = join(dirname(fromFileUrl(import.meta.url)), "templates", "hero-journey.txt");
+  await generateStory({
+    provider: "openai",
+    temperature: 0.7,
+    maxTokens: 4000,
+    model: "gpt-4",
+    templatePath  // This will use concept.txt for the story concept
+  });
+}
 
-const concept = "After a series of unexplained sightings...";
-const template = await loadFile(templatePath);
-const llm = createProvider("openai", { 
-  temperature: 0.7, 
-  maxTokens: 4000,
-  model: "gpt-4-0125-preview"
-});
+async function example2() {
+  console.log("Running Example 2: Using dynamic template and explicit concept");
+  const dynamicTemplate = `
+Create a story that follows this structure:
+1. Setup: Establish the ordinary world
+2. Call to Adventure: An unexpected discovery
+3. Challenges: Facing internal and external obstacles
+4. Transformation: Character growth through trials
+5. Resolution: Return with new understanding
 
-const response = await llm.generateContent(`${template}\n\nConcept: ${concept}`);
-await ensureDir("output");
-await Deno.writeTextFile(join("output", "story-openai.md"), response.content);
-console.log("Story generated and saved to output/story-openai.md");
+Focus on:
+- Character development
+- World building
+- Emotional resonance
+- Theme exploration
+`;
+
+  await generateStory({
+    provider: "openai",
+    temperature: 0.7,
+    maxTokens: 4000,
+    model: "gpt-4",
+    template: dynamicTemplate,  // Using the inline template instead of a file
+    concept: "In a world where memories can be photographed and framed like pictures, a gallery curator discovers an ancient collection that seems to predict future events..."  // Overriding concept.txt
+  });
+}
+
+// Main execution
+if (import.meta.main) {
+  const example = Deno.args[0];
+  
+  switch (example) {
+    case "1":
+      await example1();
+      break;
+    case "2":
+      await example2();
+      break;
+    default:
+      console.log("Please specify which example to run:");
+      console.log("  deno run --allow-net --allow-env --allow-read --allow-write examples/story/generate-openai.ts 1");
+      console.log("  deno run --allow-net --allow-env --allow-read --allow-write examples/story/generate-openai.ts 2");
+  }
+}

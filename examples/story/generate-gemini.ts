@@ -5,10 +5,10 @@ async function example1() {
   console.log("Running Example 1: Using template file and concept.txt");
   const templatePath = join(dirname(fromFileUrl(import.meta.url)), "templates", "hero-journey.txt");
   await generateStory({
-    provider: "groq",
+    provider: "gemini",
     temperature: 0.7,
     maxTokens: 4000,
-    model: "mixtral-8x7b-32768",
+    model: "gemini-pro",
     templatePath  // This will use concept.txt for the story concept
   });
 }
@@ -16,27 +16,27 @@ async function example1() {
 async function example2() {
   console.log("Running Example 2: Using dynamic template and explicit concept");
   const dynamicTemplate = `
-Create a science fiction story that follows this structure:
-1. First Contact: Initial alien signal detection
-2. Understanding: Decoding the message
-3. Revelation: The true nature of the communication
-4. Crisis: Dealing with the implications
-5. Bridge: Finding common ground between species
+Create a story that follows this structure:
+1. Setup: A world where dreams are shared
+2. Discovery: The first dream bridge connection
+3. Complications: Personal boundaries and trust issues
+4. Development: Learning to navigate shared consciousness
+5. Resolution: Finding balance between connection and privacy
 
 Focus on:
-- Cultural differences
-- Communication challenges
-- Scientific discovery
-- Universal connections
+- Psychological impact
+- Personal growth
+- Relationship dynamics
+- Privacy vs intimacy
 `;
 
   await generateStory({
-    provider: "groq",
+    provider: "gemini",
     temperature: 0.7,
     maxTokens: 4000,
-    model: "mixtral-8x7b-32768",
+    model: "gemini-pro",
     template: dynamicTemplate,  // Using the inline template instead of a file
-    concept: "When humanity's first interstellar message was answered, the response came not in radio waves or light signals, but in patterns of quantum entanglement that defied our understanding of physics..."  // Overriding concept.txt
+    concept: "In a world where dreams could be shared like social media posts, a dream therapist discovers an ancient nightmare that has been secretly spreading from mind to mind..."  // Overriding concept.txt
   });
 }
 
@@ -53,7 +53,7 @@ if (import.meta.main) {
       break;
     default:
       console.log("Please specify which example to run:");
-      console.log("  deno run --allow-net --allow-env --allow-read --allow-write examples/story/generate-groq.ts 1");
-      console.log("  deno run --allow-net --allow-env --allow-read --allow-write examples/story/generate-groq.ts 2");
+      console.log("  deno run --allow-net --allow-env --allow-read --allow-write examples/story/generate-gemini.ts 1");
+      console.log("  deno run --allow-net --allow-env --allow-read --allow-write examples/story/generate-gemini.ts 2");
   }
-}
+} 
