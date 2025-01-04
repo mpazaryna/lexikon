@@ -1,4 +1,4 @@
-import { join, dirname, fromFileUrl } from "https://deno.land/std@0.217.0/path/mod.ts";
+import { join, dirname, fromFileUrl } from "@std/path";
 import { loadFile } from "../context/handler.ts";
 import { StoryGeneratorOptions } from "../../types.ts";
 import { BaseGenerator } from "./base.ts";

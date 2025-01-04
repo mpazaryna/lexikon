@@ -1,5 +1,5 @@
 import { generateStory } from "../../core/generators/story.ts";
-import { join, dirname, fromFileUrl } from "https://deno.land/std@0.217.0/path/mod.ts";
+import { join, dirname, fromFileUrl } from "@std/path";
 
 async function example1() {
   console.log("Running Example 1: Using template file and concept.txt");

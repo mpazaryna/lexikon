@@ -1,5 +1,5 @@
-import { join } from "https://deno.land/std@0.217.0/path/mod.ts";
-import { ensureDir } from "https://deno.land/std@0.217.0/fs/mod.ts";
+import { join } from "@std/path";
+import { ensureDir } from "@std/fs";
 import { createProvider } from "../llm/factory.ts";
 import { loadFile } from "../context/handler.ts";
 import { BaseGeneratorOptions, ProviderType } from "../../types.ts";
