@@ -53,18 +53,19 @@ export const generateContent = async (
         ],
         generationConfig: {
           maxOutputTokens: mergedConfig.maxTokens,
-          temperature: mergedConfig.temperature,
+          temperature: mergedConfig.temperature
         }
       })
     });
 
     if (!response.ok) {
-      console.error("❌ API request failed:", await response.text());
-      handleError(await response.text());
+      const error = await response.json();
+      handleError(error);
     }
-    
-    console.log("✅ Received successful response from Gemini");
+
     const data = await response.json();
+    console.log("✅ Received response from Gemini API");
+    
     return {
       content: data.candidates[0].content.parts[0].text,
       usage: {
@@ -73,8 +74,8 @@ export const generateContent = async (
         totalTokens: 0
       }
     };
+    
   } catch (error) {
-    console.error("❌ Error during API call:", error);
     handleError(error);
   }
 }; 

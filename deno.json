@@ -6,5 +6,9 @@
   "imports": {
     "@std/path": "jsr:@std/path@0.217.0",
     "@std/fs": "jsr:@std/fs@0.217.0"
+  },
+  "compilerOptions": {
+    "lib": ["esnext", "deno.window", "dom"],
+    "types": ["./types.d.ts"]
   }
 }

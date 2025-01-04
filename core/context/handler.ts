@@ -5,11 +5,17 @@ export type Context = {
   metadata?: Record<string, unknown>;
 };
 
+type FileError = {
+  code: string;
+  message: string;
+};
+
 export const loadFile = async (path: string): Promise<string> => {
   try {
     return await Deno.readTextFile(path);
-  } catch (error) {
-    throw { code: "FILE_ERROR", message: `Failed to load file: ${error.message}` };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw { code: "FILE_ERROR", message: `Failed to load file: ${message}` } as FileError;
   }
 };
 

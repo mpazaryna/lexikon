@@ -58,18 +58,23 @@ export const generateContent = async (
     });
 
     if (!response.ok) {
-      console.error("❌ API request failed:", await response.text());
-      handleError(await response.text());
+      const error = await response.json();
+      handleError(error);
     }
-    
-    console.log("✅ Received successful response from Claude");
+
     const data = await response.json();
+    console.log("✅ Received response from Claude API");
+    
     return {
       content: data.content[0].text,
-      usage: data.usage
+      usage: {
+        promptTokens: 0,
+        completionTokens: 0,
+        totalTokens: 0
+      }
     };
+    
   } catch (error) {
-    console.error("❌ Error during API call:", error);
     handleError(error);
   }
 };

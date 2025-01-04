@@ -48,32 +48,26 @@ export const generateContent = async (
         model: mergedConfig.model,
         max_tokens: mergedConfig.maxTokens,
         messages: [
-          { 
-            role: "system", 
-            content: "You are a creative writing assistant. Provide complete, detailed responses."
-          },
-          { 
-            role: "user", 
-            content: prompt 
-          }
+          { role: "user", content: prompt }
         ],
         temperature: mergedConfig.temperature
       })
     });
 
     if (!response.ok) {
-      console.error("❌ API request failed:", await response.text());
-      handleError(await response.text());
+      const error = await response.json();
+      handleError(error);
     }
-    
-    console.log("✅ Received successful response from Groq");
+
     const data = await response.json();
+    console.log("✅ Received response from Groq API");
+    
     return {
       content: data.choices[0].message.content,
       usage: data.usage
     };
+    
   } catch (error) {
-    console.error("❌ Error during API call:", error);
     handleError(error);
   }
 };
