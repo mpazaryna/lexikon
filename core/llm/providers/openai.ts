@@ -1,4 +1,4 @@
-import { LLMConfig, LLMResponse, LLMError } from "../../../types.ts";
+import type { LLMConfig, LLMResponse, LLMError } from "../../../types.ts";
 
 const defaultConfig = {
   model: "gpt-4-0125-preview",

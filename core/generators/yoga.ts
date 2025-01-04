@@ -1,4 +1,4 @@
-import { YogaGeneratorOptions } from "../../types.ts";
+import type { YogaGeneratorOptions } from "../../types.ts";
 import { BaseGenerator } from "./base.ts";
 
 export class YogaGenerator extends BaseGenerator {

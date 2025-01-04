@@ -1,4 +1,4 @@
-import { LLMConfig, LLMProvider, ProviderType } from "../../types.ts";
+import type { LLMConfig, LLMProvider, ProviderType } from "../../types.ts";
 import * as claude from "./providers/claude.ts";
 import * as openai from "./providers/openai.ts";
 import * as groq from "./providers/groq.ts";

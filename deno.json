@@ -8,7 +8,8 @@
     "@std/fs": "jsr:@std/fs@0.217.0"
   },
   "compilerOptions": {
-    "lib": ["esnext", "deno.window", "dom"],
-    "types": ["./types.d.ts"]
+    "allowJs": true,
+    "strict": true,
+    "lib": ["deno.window", "deno.ns"]
   }
 }

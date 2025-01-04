@@ -1,6 +1,6 @@
 import { join, dirname, fromFileUrl } from "@std/path";
 import { loadFile } from "../context/handler.ts";
-import { StoryGeneratorOptions } from "../../types.ts";
+import type { StoryGeneratorOptions } from "../../types.ts";
 import { BaseGenerator } from "./base.ts";
 
 export class StoryGenerator extends BaseGenerator {

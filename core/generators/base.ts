@@ -2,7 +2,7 @@ import { join } from "@std/path";
 import { ensureDir } from "@std/fs";
 import { createProvider } from "../llm/factory.ts";
 import { loadFile } from "../context/handler.ts";
-import { BaseGeneratorOptions, ProviderType } from "../../types.ts";
+import type { BaseGeneratorOptions, ProviderType } from "../../types.ts";
 
 export abstract class BaseGenerator {
   protected options: BaseGeneratorOptions;

@@ -1,5 +1,5 @@
 // Import types and generators from GitHub
-import {
+import type {
   ProviderType,
   LLMConfig,
   StoryGeneratorOptions,
