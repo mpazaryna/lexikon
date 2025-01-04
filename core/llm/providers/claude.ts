@@ -1,17 +1,46 @@
+/**
+ * @module ClaudeProvider
+ * @description Implementation of the Claude LLM provider using Anthropic's API.
+ * Provides functionality to generate content using Claude's latest models with
+ * configurable parameters for temperature and token limits.
+ */
+
 import type { LLMConfig, LLMResponse, LLMError } from "../../../types.ts";
 
+/**
+ * @constant
+ * @description Default configuration for Claude API requests
+ * @property {string} model - Default Claude model version
+ * @property {number} maxTokens - Maximum tokens to generate
+ * @property {number} temperature - Controls response randomness
+ */
 const defaultConfig = {
   model: "claude-3-sonnet-20240229",
   maxTokens: 4000,
   temperature: 0.7,
 };
 
+/**
+ * @function createHeaders
+ * @param {string} apiKey - Anthropic API key for authentication
+ * @returns {Object} Headers object for Claude API requests
+ * @description Creates the necessary headers for Claude API requests including
+ * content type, API key, and API version specifications
+ */
 const createHeaders = (apiKey: string) => ({
   "Content-Type": "application/json",
   "x-api-key": apiKey,
   "anthropic-version": "2023-06-01"
 });
 
+/**
+ * @function handleError
+ * @param {unknown} error - Error object or message to process
+ * @returns {never} Never returns, always throws an error
+ * @throws {LLMError} Standardized error object for Claude API errors
+ * @description Processes errors from the Claude API and converts them into
+ * standardized LLMError objects for consistent error handling
+ */
 const handleError = (error: unknown): never => {
   const llmError: LLMError = {
     code: "CLAUDE_ERROR",
@@ -21,6 +50,17 @@ const handleError = (error: unknown): never => {
   throw llmError;
 };
 
+/**
+ * @async
+ * @function generateContent
+ * @param {string} prompt - The input prompt for content generation
+ * @param {Partial<LLMConfig>} [config={}] - Optional configuration overrides
+ * @returns {Promise<LLMResponse>} Generated content and usage statistics
+ * @throws {LLMError} When API key is missing or API request fails
+ * @description Main function for generating content using Claude's API.
+ * Handles API key management, request configuration, and error handling.
+ * Uses system prompt to specify creative writing context.
+ */
 export const generateContent = async (
   prompt: string, 
   config: Partial<LLMConfig> = {}

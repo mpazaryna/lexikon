@@ -1,16 +1,46 @@
+/**
+ * @module OpenAIProvider
+ * @description Implementation of the OpenAI LLM provider using their chat completions API.
+ * Provides functionality to generate content using OpenAI's latest models with
+ * configurable parameters for temperature and token limits. Optimized for GPT-4
+ * and other advanced language models.
+ */
+
 import type { LLMConfig, LLMResponse, LLMError } from "../../../types.ts";
 
+/**
+ * @constant
+ * @description Default configuration for OpenAI API requests
+ * @property {string} model - Default GPT-4 model version
+ * @property {number} maxTokens - Maximum tokens to generate
+ * @property {number} temperature - Controls response randomness
+ */
 const defaultConfig = {
   model: "gpt-4-0125-preview",
   maxTokens: 4000, // Increased max tokens
   temperature: 0.7,
 };
 
+/**
+ * @function createHeaders
+ * @param {string} apiKey - OpenAI API key for authentication
+ * @returns {Object} Headers object for OpenAI API requests
+ * @description Creates the necessary headers for OpenAI API requests including
+ * content type and Bearer token authentication
+ */
 const createHeaders = (apiKey: string) => ({
   "Content-Type": "application/json",
   "Authorization": `Bearer ${apiKey}`
 });
 
+/**
+ * @function handleError
+ * @param {unknown} error - Error object or message to process
+ * @returns {never} Never returns, always throws an error
+ * @throws {LLMError} Standardized error object for OpenAI API errors
+ * @description Processes errors from the OpenAI API and converts them into
+ * standardized LLMError objects for consistent error handling
+ */
 const handleError = (error: unknown): never => {
   const llmError: LLMError = {
     code: "OPENAI_ERROR",
@@ -20,6 +50,17 @@ const handleError = (error: unknown): never => {
   throw llmError;
 };
 
+/**
+ * @async
+ * @function generateContent
+ * @param {string} prompt - The input prompt for content generation
+ * @param {Partial<LLMConfig>} [config={}] - Optional configuration overrides
+ * @returns {Promise<LLMResponse>} Generated content and usage statistics
+ * @throws {LLMError} When API key is missing or API request fails
+ * @description Main function for generating content using OpenAI's API.
+ * Handles API key management, request configuration, and error handling.
+ * Uses the chat completions endpoint for generation with detailed usage tracking.
+ */
 export const generateContent = async (
   prompt: string, 
   config: Partial<LLMConfig> = {}
