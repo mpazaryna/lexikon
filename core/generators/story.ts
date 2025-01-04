@@ -37,5 +37,5 @@ export class StoryGenerator extends BaseGenerator {
 
 export async function generateStory(options: StoryGeneratorOptions): Promise<string> {
   const generator = new StoryGenerator(options);
-  return generator.generate();
+  return await generator.generate();
 } 

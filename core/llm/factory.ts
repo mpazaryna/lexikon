@@ -6,10 +6,10 @@ import * as gemini from "./providers/gemini.ts";
 
 export const createProvider = (type: ProviderType, config: Partial<LLMConfig> = {}): LLMProvider => {
   const providers = {
-    claude: { generateContent: claude.generateContent },
-    openai: { generateContent: openai.generateContent },
-    groq: { generateContent: groq.generateContent },
-    gemini: { generateContent: gemini.generateContent }
+    claude: { generateContent: (prompt: string) => claude.generateContent(prompt, config) },
+    openai: { generateContent: (prompt: string) => openai.generateContent(prompt, config) },
+    groq: { generateContent: (prompt: string) => groq.generateContent(prompt, config) },
+    gemini: { generateContent: (prompt: string) => gemini.generateContent(prompt, config) }
   };
 
   return providers[type] || 

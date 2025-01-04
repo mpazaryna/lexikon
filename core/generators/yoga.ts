@@ -26,5 +26,5 @@ export class YogaGenerator extends BaseGenerator {
 
 export async function generateYogaSequence(options: YogaGeneratorOptions): Promise<string> {
   const generator = new YogaGenerator(options);
-  return generator.generate();
+  return await generator.generate();
 } 
