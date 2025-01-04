@@ -6,6 +6,7 @@
  */
 
 import type { LLMConfig, LLMResponse, LLMError } from "../../../types.ts";
+import { usageTracker } from "../../monitoring/index.ts";
 
 /**
  * @constant
@@ -36,17 +37,29 @@ const createHeaders = (apiKey: string) => ({
 /**
  * @function handleError
  * @param {unknown} error - Error object or message to process
+ * @param {number} startTime - Start time of the request
  * @returns {never} Never returns, always throws an error
  * @throws {LLMError} Standardized error object for Claude API errors
  * @description Processes errors from the Claude API and converts them into
  * standardized LLMError objects for consistent error handling
  */
-const handleError = (error: unknown): never => {
+const handleError = (error: unknown, startTime?: number): never => {
   const llmError: LLMError = {
     code: "CLAUDE_ERROR",
     message: error instanceof Error ? error.message : "Unknown error",
     provider: "claude"
   };
+  
+  if (startTime) {
+    usageTracker.recordUsage(
+      "claude",
+      defaultConfig.model,
+      { content: "", usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 } },
+      Date.now() - startTime,
+      llmError.message
+    );
+  }
+  
   throw llmError;
 };
 
@@ -65,12 +78,13 @@ export const generateContent = async (
   prompt: string, 
   config: Partial<LLMConfig> = {}
 ): Promise<LLMResponse> => {
+  const startTime = Date.now();
   console.log("📡 Preparing Claude API request...");
   
   const apiKey = config.apiKey ?? Deno.env.get("ANTHROPIC_API_KEY");
   if (!apiKey) {
     console.error("❌ No API key found!");
-    return handleError({ code: "NO_API_KEY", message: "Missing API key" });
+    return handleError({ code: "NO_API_KEY", message: "Missing API key" }, startTime);
   }
 
   const mergedConfig = { ...defaultConfig, ...config };
@@ -98,21 +112,30 @@ export const generateContent = async (
     });
 
     if (!response.ok) {
-      return handleError(await response.json());
+      return handleError(await response.json(), startTime);
     }
 
     const data = await response.json();
     console.log("✅ Received response from Claude API");
     
-    return {
+    const result = {
       content: data.content[0].text,
       usage: {
-        promptTokens: 0,
-        completionTokens: 0,
-        totalTokens: 0
+        promptTokens: data.usage?.input_tokens ?? 0,
+        completionTokens: data.usage?.output_tokens ?? 0,
+        totalTokens: (data.usage?.input_tokens ?? 0) + (data.usage?.output_tokens ?? 0)
       }
     };
+
+    usageTracker.recordUsage(
+      "claude",
+      mergedConfig.model,
+      result,
+      Date.now() - startTime
+    );
+
+    return result;
   } catch (error) {
-    return handleError(error);
+    return handleError(error, startTime);
   }
 };

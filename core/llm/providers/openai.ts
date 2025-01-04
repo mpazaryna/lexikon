@@ -7,6 +7,7 @@
  */
 
 import type { LLMConfig, LLMResponse, LLMError } from "../../../types.ts";
+import { usageTracker } from "../../monitoring/index.ts";
 
 /**
  * @constant
@@ -80,6 +81,7 @@ export const generateContent = async (
     temperature: mergedConfig.temperature
   });
   
+  const startTime = Date.now();
   try {
     console.log("🔄 Sending request to OpenAI API...");
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -96,17 +98,41 @@ export const generateContent = async (
     });
 
     if (!response.ok) {
-      return handleError(await response.json());
+      const error = await response.json();
+      usageTracker.recordUsage(
+        "openai",
+        mergedConfig.model,
+        { content: "", usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 } },
+        Date.now() - startTime,
+        error.message
+      );
+      return handleError(error);
     }
 
     const data = await response.json();
     console.log("✅ Received response from OpenAI API");
     
-    return {
+    const result = {
       content: data.choices[0].message.content,
       usage: data.usage
     };
+
+    usageTracker.recordUsage(
+      "openai",
+      mergedConfig.model,
+      result,
+      Date.now() - startTime
+    );
+
+    return result;
   } catch (error) {
+    usageTracker.recordUsage(
+      "openai",
+      mergedConfig.model,
+      { content: "", usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 } },
+      Date.now() - startTime,
+      error instanceof Error ? error.message : "Unknown error"
+    );
     return handleError(error);
   }
 };

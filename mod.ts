@@ -14,3 +14,6 @@ export { generateContent as geminiProvider } from "./core/llm/providers/gemini.t
 // Generator exports
 export { generateStory, StoryGenerator } from "./core/generators/story.ts";
 export { generateYogaSequence, YogaGenerator } from "./core/generators/yoga.ts";
+
+// Monitoring exports
+export { usageTracker, UsageTracker, type UsageMetrics, type CostMetrics } from "./core/monitoring/index.ts";

@@ -6,6 +6,7 @@
  */
 
 import type { LLMConfig, LLMResponse, LLMError } from "../../../types.ts";
+import { usageTracker } from "../../monitoring/index.ts";
 
 /**
  * @constant
@@ -35,17 +36,29 @@ const createHeaders = (apiKey: string) => ({
 /**
  * @function handleError
  * @param {unknown} error - Error object or message to process
+ * @param {number} [startTime] - Optional start time for usage tracking
  * @returns {never} Never returns, always throws an error
  * @throws {LLMError} Standardized error object for Gemini API errors
  * @description Processes errors from the Gemini API and converts them into
  * standardized LLMError objects for consistent error handling
  */
-const handleError = (error: unknown): never => {
+const handleError = (error: unknown, startTime?: number): never => {
   const llmError: LLMError = {
     code: "GEMINI_ERROR",
     message: error instanceof Error ? error.message : "Unknown error",
     provider: "gemini"
   };
+  
+  if (startTime) {
+    usageTracker.recordUsage(
+      "gemini",
+      defaultConfig.model,
+      { content: "", usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 } },
+      Date.now() - startTime,
+      llmError.message
+    );
+  }
+  
   throw llmError;
 };
 
@@ -64,12 +77,13 @@ export const generateContent = async (
   prompt: string, 
   config: Partial<LLMConfig> = {}
 ): Promise<LLMResponse> => {
+  const startTime = Date.now();
   console.log("📡 Preparing Gemini API request...");
   
   const apiKey = config.apiKey ?? Deno.env.get("GOOGLE_API_KEY");
   if (!apiKey) {
     console.error("❌ No API key found!");
-    return handleError({ code: "NO_API_KEY", message: "Missing API key" });
+    return handleError({ code: "NO_API_KEY", message: "Missing API key" }, startTime);
   }
 
   const mergedConfig = { ...defaultConfig, ...config };
@@ -99,13 +113,13 @@ export const generateContent = async (
     });
 
     if (!response.ok) {
-      return handleError(await response.json());
+      return handleError(await response.json(), startTime);
     }
 
     const data = await response.json();
     console.log("✅ Received response from Gemini API");
     
-    return {
+    const result = {
       content: data.candidates[0].content.parts[0].text,
       usage: {
         promptTokens: 0,
@@ -113,7 +127,16 @@ export const generateContent = async (
         totalTokens: 0
       }
     };
+
+    usageTracker.recordUsage(
+      "gemini",
+      mergedConfig.model,
+      result,
+      Date.now() - startTime
+    );
+
+    return result;
   } catch (error) {
-    return handleError(error);
+    return handleError(error, startTime);
   }
 }; 
