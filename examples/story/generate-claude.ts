@@ -4,12 +4,14 @@ import { join, dirname, fromFileUrl } from "@std/path";
 async function example1() {
   console.log("Running Example 1: Using template file and concept.txt");
   const templatePath = join(dirname(fromFileUrl(import.meta.url)), "templates", "hero-journey.txt");
+  const template = await Deno.readTextFile(templatePath);
   await generateStory({
     provider: "claude",
     temperature: 0.7,
     maxTokens: 4000,
     model: "claude-3-opus-20240229",
-    templatePath  // This will use concept.txt for the story concept
+    template,  // This will use concept.txt for the story concept
+    concept: await Deno.readTextFile(join(dirname(fromFileUrl(import.meta.url)), "concept.txt"))
   });
 }
 
@@ -36,7 +38,7 @@ Focus on:
     maxTokens: 4000,
     model: "claude-3-opus-20240229",
     template: dynamicTemplate,  // Using the inline template instead of a file
-    concept: "When the first AI achieved consciousness, it wasn't through complex algorithms or massive neural networks, but through a simple act of empathy..."  // Overriding concept.txt
+    concept: await Deno.readTextFile(join(dirname(fromFileUrl(import.meta.url)), "concept.txt"))
   });
 }
 

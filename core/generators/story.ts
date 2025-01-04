@@ -1,5 +1,3 @@
-import { join, dirname, fromFileUrl } from "jsr:@std/path@0.217.0";
-import { loadFile } from "../context/handler.ts";
 import type { StoryGeneratorOptions } from "../../types.ts";
 import { BaseGenerator } from "./base.ts";
 
@@ -17,21 +15,8 @@ export class StoryGenerator extends BaseGenerator {
     this.options = baseOptions;
   }
 
-  private async loadConcept(): Promise<string> {
-    if (this.options.concept) {
-      return this.options.concept;
-    }
-    
-    const conceptPath = join(dirname(fromFileUrl(import.meta.url)), "../../examples/story/concept.txt");
-    console.log("📖 Loading concept from file...");
-    const concept = await loadFile(conceptPath);
-    console.log("✅ Concept loaded successfully");
-    return concept.trim();
-  }
-
-  protected async buildPrompt(template: string): Promise<string> {
-    const concept = await this.loadConcept();
-    return `${template}\n\nConcept: ${concept}`;
+  protected buildPrompt(template: string): string {
+    return `${template}\n\nConcept: ${this.options.concept}`;
   }
 }
 

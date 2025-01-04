@@ -4,12 +4,14 @@ import { join, dirname, fromFileUrl } from "@std/path";
 async function example1() {
   console.log("Running Example 1: Using template file and concept.txt");
   const templatePath = join(dirname(fromFileUrl(import.meta.url)), "templates", "hero-journey.txt");
+  const template = await Deno.readTextFile(templatePath);
   await generateStory({
     provider: "groq",
     temperature: 0.7,
     maxTokens: 4000,
     model: "mixtral-8x7b-32768",
-    templatePath  // This will use concept.txt for the story concept
+    template,
+    concept: await Deno.readTextFile(join(dirname(fromFileUrl(import.meta.url)), "concept.txt"))
   });
 }
 

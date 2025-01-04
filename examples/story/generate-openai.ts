@@ -1,15 +1,17 @@
 import { generateStory } from "../../core/generators/story.ts";
-import { join, dirname, fromFileUrl } from "@std/path";
+import { join, dirname, fromFileUrl } from "jsr:@std/path@0.217.0";
 
 async function example1() {
-  console.log("Running Example 1: Using template file and concept.txt");
+  console.log("Running Example 1: Using template file with explicit concept");
   const templatePath = join(dirname(fromFileUrl(import.meta.url)), "templates", "hero-journey.txt");
+  const template = await Deno.readTextFile(templatePath);
   await generateStory({
     provider: "openai",
     temperature: 0.7,
     maxTokens: 4000,
     model: "gpt-4",
-    templatePath  // This will use concept.txt for the story concept
+    template,
+    concept: "In a world where time travel is possible but strictly regulated, a historian discovers that someone has been subtly altering historical events to prevent a future catastrophe. The changes are so minor they've gone unnoticed by the Time Authority, but their cumulative effect could rewrite the present as we know it."
   });
 }
 

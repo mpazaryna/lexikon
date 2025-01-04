@@ -1,15 +1,17 @@
 import { generateStory } from "../../core/generators/story.ts";
-import { join, dirname, fromFileUrl } from "@std/path";
+import { join, dirname, fromFileUrl } from "jsr:@std/path@0.217.0";
 
 async function example1() {
   console.log("Running Example 1: Using template file and concept.txt");
   const templatePath = join(dirname(fromFileUrl(import.meta.url)), "templates", "hero-journey.txt");
+  const template = await Deno.readTextFile(templatePath);
   await generateStory({
     provider: "gemini",
     temperature: 0.7,
     maxTokens: 4000,
     model: "gemini-pro",
-    templatePath  // This will use concept.txt for the story concept
+    template,  // This will use concept.txt for the story concept
+    concept: await Deno.readTextFile(join(dirname(fromFileUrl(import.meta.url)), "concept.txt"))
   });
 }
 
