@@ -22,6 +22,14 @@ const defaultConfig = {
 };
 
 /**
+ * Estimates token count based on character count (rough approximation)
+ * On average, 1 token is about 4 characters in English text
+ */
+function estimateTokenCount(text: string): number {
+  return Math.ceil(text.length / 4);
+}
+
+/**
  * @function createHeaders
  * @param {string} apiKey - Google API key for authentication
  * @returns {Object} Headers object for Gemini API requests
@@ -119,12 +127,16 @@ export const generateContent = async (
     const data = await response.json();
     console.log("✅ Received response from Gemini API");
     
+    const content = data.candidates[0].content.parts[0].text;
+    const promptTokens = estimateTokenCount(prompt);
+    const completionTokens = estimateTokenCount(content);
+
     const result = {
-      content: data.candidates[0].content.parts[0].text,
+      content,
       usage: {
-        promptTokens: 0,
-        completionTokens: 0,
-        totalTokens: 0
+        promptTokens,
+        completionTokens,
+        totalTokens: promptTokens + completionTokens
       }
     };
 

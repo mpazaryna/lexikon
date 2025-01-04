@@ -37,17 +37,29 @@ const createHeaders = (apiKey: string) => ({
 /**
  * @function handleError
  * @param {unknown} error - Error object or message to process
+ * @param {number} startTime - Start time of the request
  * @returns {never} Never returns, always throws an error
  * @throws {LLMError} Standardized error object for OpenAI API errors
  * @description Processes errors from the OpenAI API and converts them into
  * standardized LLMError objects for consistent error handling
  */
-const handleError = (error: unknown): never => {
+const handleError = (error: unknown, startTime?: number): never => {
   const llmError: LLMError = {
     code: "OPENAI_ERROR",
     message: error instanceof Error ? error.message : "Unknown error",
     provider: "openai"
   };
+
+  if (startTime) {
+    usageTracker.recordUsage(
+      "openai",
+      defaultConfig.model,
+      { content: "", usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 } },
+      Date.now() - startTime,
+      llmError.message
+    );
+  }
+
   throw llmError;
 };
 
@@ -66,12 +78,13 @@ export const generateContent = async (
   prompt: string, 
   config: Partial<LLMConfig> = {}
 ): Promise<LLMResponse> => {
+  const startTime = Date.now();
   console.log("📡 Preparing OpenAI API request...");
   
   const apiKey = config.apiKey ?? Deno.env.get("OPENAI_API_KEY");
   if (!apiKey) {
     console.error("❌ No API key found!");
-    return handleError({ code: "NO_API_KEY", message: "Missing API key" });
+    return handleError({ code: "NO_API_KEY", message: "Missing API key" }, startTime);
   }
 
   const mergedConfig = { ...defaultConfig, ...config };
@@ -81,7 +94,6 @@ export const generateContent = async (
     temperature: mergedConfig.temperature
   });
   
-  const startTime = Date.now();
   try {
     console.log("🔄 Sending request to OpenAI API...");
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -114,7 +126,11 @@ export const generateContent = async (
     
     const result = {
       content: data.choices[0].message.content,
-      usage: data.usage
+      usage: {
+        promptTokens: data.usage.prompt_tokens,
+        completionTokens: data.usage.completion_tokens,
+        totalTokens: data.usage.total_tokens
+      }
     };
 
     usageTracker.recordUsage(

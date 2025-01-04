@@ -110,7 +110,15 @@ export const generateContent = async (
     });
 
     if (!response.ok) {
-      return handleError(await response.json(), startTime);
+      const error = await response.json();
+      usageTracker.recordUsage(
+        "groq",
+        mergedConfig.model,
+        { content: "", usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 } },
+        Date.now() - startTime,
+        error.message
+      );
+      return handleError(error);
     }
 
     const data = await response.json();
@@ -118,7 +126,11 @@ export const generateContent = async (
     
     const result = {
       content: data.choices[0].message.content,
-      usage: data.usage
+      usage: {
+        promptTokens: data.usage.prompt_tokens,
+        completionTokens: data.usage.completion_tokens,
+        totalTokens: data.usage.total_tokens
+      }
     };
 
     usageTracker.recordUsage(
@@ -130,6 +142,13 @@ export const generateContent = async (
 
     return result;
   } catch (error) {
-    return handleError(error, startTime);
+    usageTracker.recordUsage(
+      "groq",
+      mergedConfig.model,
+      { content: "", usage: { promptTokens: 0, completionTokens: 0, totalTokens: 0 } },
+      Date.now() - startTime,
+      error instanceof Error ? error.message : "Unknown error"
+    );
+    return handleError(error);
   }
 };

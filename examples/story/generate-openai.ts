@@ -1,6 +1,8 @@
 import { generateStory } from "../../core/generators/story.ts";
-import { join, dirname, fromFileUrl } from "jsr:@std/path@0.217.0";
+import { join, dirname, fromFileUrl } from "@std/path";
+import { usageTracker } from "../../core/monitoring/index.ts";
 
+// deno-lint-ignore-file no-undef
 async function example1() {
   console.log("Running Example 1: Using template file with explicit concept");
   const templatePath = join(dirname(fromFileUrl(import.meta.url)), "templates", "hero-journey.txt");
@@ -13,6 +15,19 @@ async function example1() {
     template,
     concept: "In a world where time travel is possible but strictly regulated, a historian discovers that someone has been subtly altering historical events to prevent a future catastrophe. The changes are so minor they've gone unnoticed by the Time Authority, but their cumulative effect could rewrite the present as we know it."
   });
+
+  // Display usage statistics
+  const stats = usageTracker.getUsageStats();
+  console.log("\n📊 Usage Statistics:");
+  console.log(`Total API calls: ${stats.totalCalls}`);
+  console.log(`Success rate: ${stats.successRate.toFixed(1)}%`);
+  console.log(`Average latency: ${stats.averageLatency.toFixed(0)}ms`);
+  console.log(`Total tokens used: ${stats.totalTokens}`);
+  console.log(`Estimated cost: $${stats.totalCost.toFixed(4)}`);
+  
+  if (stats.usageByProvider.openai) {
+    console.log(`Tokens used by OpenAI: ${stats.usageByProvider.openai}`);
+  }
 }
 
 async function example2() {
@@ -40,6 +55,19 @@ Focus on:
     template: dynamicTemplate,  // Using the inline template instead of a file
     concept: "In a world where memories can be photographed and framed like pictures, a gallery curator discovers an ancient collection that seems to predict future events..."  // Overriding concept.txt
   });
+
+  // Display usage statistics
+  const stats = usageTracker.getUsageStats();
+  console.log("\n📊 Usage Statistics:");
+  console.log(`Total API calls: ${stats.totalCalls}`);
+  console.log(`Success rate: ${stats.successRate.toFixed(1)}%`);
+  console.log(`Average latency: ${stats.averageLatency.toFixed(0)}ms`);
+  console.log(`Total tokens used: ${stats.totalTokens}`);
+  console.log(`Estimated cost: $${stats.totalCost.toFixed(4)}`);
+  
+  if (stats.usageByProvider.openai) {
+    console.log(`Tokens used by OpenAI: ${stats.usageByProvider.openai}`);
+  }
 }
 
 // Main execution

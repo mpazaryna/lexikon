@@ -1,6 +1,8 @@
 import { generateStory } from "../../core/generators/story.ts";
 import { join, dirname, fromFileUrl } from "@std/path";
+import { usageTracker } from "../../core/monitoring/index.ts";
 
+// deno-lint-ignore-file no-undef
 async function example1() {
   console.log("Running Example 1: Using template file and concept.txt");
   const templatePath = join(dirname(fromFileUrl(import.meta.url)), "templates", "hero-journey.txt");
@@ -13,6 +15,19 @@ async function example1() {
     template,
     concept: await Deno.readTextFile(join(dirname(fromFileUrl(import.meta.url)), "concept.txt"))
   });
+
+  // Display usage statistics
+  const stats = usageTracker.getUsageStats();
+  console.log("\n📊 Usage Statistics:");
+  console.log(`Total API calls: ${stats.totalCalls}`);
+  console.log(`Success rate: ${stats.successRate.toFixed(1)}%`);
+  console.log(`Average latency: ${stats.averageLatency.toFixed(0)}ms`);
+  console.log(`Total tokens used: ${stats.totalTokens}`);
+  console.log(`Estimated cost: $${stats.totalCost.toFixed(4)}`);
+  
+  if (stats.usageByProvider.groq) {
+    console.log(`Tokens used by Groq: ${stats.usageByProvider.groq}`);
+  }
 }
 
 async function example2() {
@@ -40,6 +55,19 @@ Focus on:
     template: dynamicTemplate,  // Using the inline template instead of a file
     concept: "When humanity's first interstellar message was answered, the response came not in radio waves or light signals, but in patterns of quantum entanglement that defied our understanding of physics..."  // Overriding concept.txt
   });
+
+  // Display usage statistics
+  const stats = usageTracker.getUsageStats();
+  console.log("\n📊 Usage Statistics:");
+  console.log(`Total API calls: ${stats.totalCalls}`);
+  console.log(`Success rate: ${stats.successRate.toFixed(1)}%`);
+  console.log(`Average latency: ${stats.averageLatency.toFixed(0)}ms`);
+  console.log(`Total tokens used: ${stats.totalTokens}`);
+  console.log(`Estimated cost: $${stats.totalCost.toFixed(4)}`);
+  
+  if (stats.usageByProvider.groq) {
+    console.log(`Tokens used by Groq: ${stats.usageByProvider.groq}`);
+  }
 }
 
 // Main execution
