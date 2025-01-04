@@ -1,4 +1,4 @@
-import { join, dirname, fromFileUrl } from "@std/path";
+import { join, dirname, fromFileUrl } from "jsr:@std/path@0.217.0";
 import { loadFile } from "../context/handler.ts";
 import type { StoryGeneratorOptions } from "../../types.ts";
 import { BaseGenerator } from "./base.ts";
