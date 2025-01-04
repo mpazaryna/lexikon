@@ -2,7 +2,7 @@ import type { YogaGeneratorOptions } from "../../types.ts";
 import { BaseGenerator } from "./base.ts";
 
 export class YogaGenerator extends BaseGenerator {
-  protected options: YogaGeneratorOptions & { outputFile: string };
+  protected override options: YogaGeneratorOptions & { outputFile: string };
 
   constructor(options: YogaGeneratorOptions) {
     const { provider, ...rest } = options;

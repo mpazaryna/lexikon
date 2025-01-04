@@ -4,7 +4,7 @@ import type { StoryGeneratorOptions } from "../../types.ts";
 import { BaseGenerator } from "./base.ts";
 
 export class StoryGenerator extends BaseGenerator {
-  protected options: StoryGeneratorOptions & { outputFile: string };
+  protected override options: StoryGeneratorOptions & { outputFile: string };
 
   constructor(options: StoryGeneratorOptions) {
     const { provider, ...rest } = options;
