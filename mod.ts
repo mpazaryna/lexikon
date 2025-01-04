@@ -1,4 +1,4 @@
-export * from "./core/llm/providers/types.ts";
+export * from "./types.ts";
 export * from "./core/llm/factory.ts";
 export * from "./core/context/handler.ts";
 
