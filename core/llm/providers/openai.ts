@@ -29,7 +29,7 @@ export const generateContent = async (
   const apiKey = config.apiKey ?? Deno.env.get("OPENAI_API_KEY");
   if (!apiKey) {
     console.error("❌ No API key found!");
-    throw { code: "NO_API_KEY", message: "Missing API key" };
+    return handleError({ code: "NO_API_KEY", message: "Missing API key" });
   }
 
   const mergedConfig = { ...defaultConfig, ...config };
@@ -55,8 +55,7 @@ export const generateContent = async (
     });
 
     if (!response.ok) {
-      const error = await response.json();
-      handleError(error);
+      return handleError(await response.json());
     }
 
     const data = await response.json();
@@ -66,8 +65,7 @@ export const generateContent = async (
       content: data.choices[0].message.content,
       usage: data.usage
     };
-    
   } catch (error) {
-    handleError(error);
+    return handleError(error);
   }
 };
