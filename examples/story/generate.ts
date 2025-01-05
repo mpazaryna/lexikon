@@ -1,6 +1,17 @@
 import { generateStory } from "../../core/generators/story.ts";
 import { join, dirname, fromFileUrl } from "@std/path";
+import { parse } from "@std/flags";
 import { usageTracker } from "../../core/monitoring/index.ts";
+
+// Add Deno types
+declare global {
+  interface Deno {
+    readTextFile(path: string): Promise<string>;
+    writeTextFile(path: string, data: string): Promise<void>;
+    args: string[];
+    exit(code: number): never;
+  }
+}
 
 type Provider = "openai" | "claude" | "gemini" | "groq";
 
@@ -28,29 +39,50 @@ const PROVIDER_CONFIGS: Record<Provider, ProviderConfig> = {
   },
 };
 
-async function generateStoryFromTemplate(provider: Provider) {
+// Parse command line arguments
+const flags = parse(Deno.args, {
+  string: ["provider", "concept"],
+  default: {
+    concept: "biologist",
+  },
+});
+
+const provider = flags.provider as Provider;
+if (!provider || !PROVIDER_CONFIGS[provider]) {
+  console.error("Please specify a valid provider: openai, claude, gemini, or groq");
+  console.error("\nUsage:");
+  console.error("  deno run --allow-read --allow-write generate.ts --provider=claude [options]");
+  console.error("\nOptions:");
+  console.error("  --concept=<string>        Story concept (default: biologist)");
+  Deno.exit(1);
+}
+
+async function generateStoryFromTemplate(provider: Provider, concept: string) {
   console.log(`Generating story using ${provider.toUpperCase()}...`);
-  const templatePath = join(dirname(fromFileUrl(import.meta.url)), "templates", "hero-journey.txt");
-  const conceptPath = join(dirname(fromFileUrl(import.meta.url)), "concept", "biologist.txt");
+  const __dirname = dirname(fromFileUrl(import.meta.url));
+  const templatePath = join(__dirname, "templates", "hero-journey.txt");
+  const conceptPath = join(__dirname, "concept", `${concept}.txt`);
 
   const template = await Deno.readTextFile(templatePath);
-  const concept = await Deno.readTextFile(conceptPath);
+  const conceptContent = await Deno.readTextFile(conceptPath);
   
   const result = await generateStory({
     provider,
     temperature: 0.7,
     ...PROVIDER_CONFIGS[provider],
     template,
-    concept
+    concept: conceptContent,
+    outputPath: join(__dirname, "..", "..", "output", `story-${provider}.md`),
+    evaluationPath: join(__dirname, "..", "..", "output", `story-evaluation-${provider}.md`)
   });
 
   // Save the generated story
-  const outputPath = join(dirname(fromFileUrl(import.meta.url)), "..", "..", "output", `story-${provider}.md`);
+  const outputPath = join(__dirname, "..", "..", "output", `story-${provider}.md`);
   await Deno.writeTextFile(outputPath, result.content);
   console.log(`\nStory saved to: ${outputPath}`);
 
   // Save evaluation results
-  const evaluationPath = join(dirname(fromFileUrl(import.meta.url)), "..", "..", "output", `story-evaluation-${provider}.md`);
+  const evaluationPath = join(__dirname, "..", "..", "output", `story-evaluation-${provider}.md`);
   const evaluationContent = [
     `# Story Evaluation Results - ${provider.toUpperCase()}`,
     "",
@@ -60,7 +92,6 @@ async function generateStoryFromTemplate(provider: Provider) {
     ...Object.entries(result.evaluation.criteriaScores).map(([criterion, score]) => [
       `### ${criterion}: ${(score.score * 100).toFixed(1)}%`,
       ...score.details.map(detail => `- ${detail}`),
-      score.missingElements?.length ? `- Missing: ${score.missingElements.join(", ")}` : "",
       ""
     ]).flat(),
     "## Recommendations",
@@ -103,19 +134,7 @@ async function generateStoryFromTemplate(provider: Provider) {
   console.log(`Average latency: ${stats.averageLatency.toFixed(0)}ms`);
   console.log(`Total tokens used: ${stats.totalTokens}`);
   console.log(`Estimated cost: $${stats.totalCost.toFixed(4)}`);
-  
-  if (stats.usageByProvider[provider]) {
-    console.log(`Tokens used by ${provider}: ${stats.usageByProvider[provider]}`);
-  }
 }
 
-// If this module is run directly, generate stories for all providers
-if (import.meta.main) {
-  const provider = Deno.args[0] as Provider;
-  if (!provider || !PROVIDER_CONFIGS[provider]) {
-    console.error("Please specify a valid provider: openai, claude, gemini, or groq");
-    Deno.exit(1);
-  }
-  
-  await generateStoryFromTemplate(provider);
-} 
+// Execute the generation
+await generateStoryFromTemplate(provider, flags.concept); 
