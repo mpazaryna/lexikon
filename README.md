@@ -106,7 +106,7 @@ MIT
 ### Improvements
 
 # Basic usage with a provider
-deno run --allow-read --allow-write examples/story/generate.ts claude
+deno run --allow-read --allow-write examples/story/generate.ts --provider=claude
 deno run --allow-read --allow-write examples/story/improve.ts --provider=claude
 
 # Run multiple improvement iterations

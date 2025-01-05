@@ -6,5 +6,5 @@ export async function improveYogaSequence(
   previousEvaluation: YogaResult["evaluation"]
 ): Promise<YogaResult> {
   const improver = new YogaImprover(config, previousEvaluation);
-  return improver.improve();
+  return await improver.improve();
 } 

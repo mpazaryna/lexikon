@@ -1,6 +1,6 @@
 import { join, dirname, fromFileUrl } from "https://deno.land/std/path/mod.ts";
 import { parse } from "https://deno.land/std/flags/mod.ts";
-import { YogaConfig, YogaResult, YogaImprover } from "../../core/generators/yoga.ts";
+import { type YogaConfig, type YogaResult, YogaImprover } from "../../core/generators/yoga.ts";
 
 type Provider = "openai" | "claude" | "gemini" | "groq";
 
@@ -75,10 +75,10 @@ async function improveSequence(
   config: YogaConfig, 
   iterations: number, 
   minScore: number, 
-  focusCriteria?: string[]
+  _focusCriteria?: string[]
 ): Promise<YogaResult> {
-  let result: YogaResult;
-  let currentConfig = config;
+  let result!: YogaResult;
+  const currentConfig = config;
 
   for (let i = 0; i < iterations; i++) {
     console.log(`\nIteration ${i + 1}/${iterations}`);

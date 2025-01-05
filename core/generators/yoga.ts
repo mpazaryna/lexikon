@@ -5,7 +5,7 @@
  * based on specified difficulty levels, durations, and focus areas.
  */
 
-import type { ProviderType, LLMResponse, TokenUsage } from "../types.ts";
+import type { LLMResponse, TokenUsage } from "../types.ts";
 import type { DomainConfig } from "../improvement/domain.ts";
 import { YogaEvaluator } from "../evaluation/yoga.ts";
 import * as providers from "../llm/providers/mod.ts";
@@ -163,6 +163,6 @@ Please generate a new sequence that specifically addresses these points while ma
       template: improvementPrompt + this.config.template
     };
     
-    return generateYogaSequence(enhancedConfig);
+    return await generateYogaSequence(enhancedConfig);
   }
 } 
