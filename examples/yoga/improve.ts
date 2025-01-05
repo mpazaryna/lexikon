@@ -1,18 +1,6 @@
-import { join, dirname, fromFileUrl } from "@std/path";
-import { parse } from "@std/flags";
-import type { YogaConfig } from "../../core/generators/yoga.ts";
-import { improveContent } from "../../core/improvement/domain.ts";
-import { YogaImprover } from "../../core/improvement/yoga.ts";
-
-// Add Deno types
-declare global {
-  const Deno: {
-    readTextFile(path: string): Promise<string>;
-    writeTextFile(path: string, data: string): Promise<void>;
-    args: string[];
-    exit(code: number): never;
-  };
-}
+import { join, dirname, fromFileUrl } from "https://deno.land/std/path/mod.ts";
+import { parse } from "https://deno.land/std/flags/mod.ts";
+import { YogaConfig, YogaResult, YogaImprover } from "../../core/generators/yoga.ts";
 
 type Provider = "openai" | "claude" | "gemini" | "groq";
 
@@ -82,12 +70,48 @@ const config: YogaConfig = {
   evaluationPath: join(__dirname, "..", "..", "output", `yoga-evaluation-${provider}.md`)
 };
 
-// Create improver
-const improver = new YogaImprover();
-
 // Run improvement process
-await improveContent(config, {
-  iterations: flags.iterations,
-  minScore: flags["min-score"],
-  focusCriteria: flags.focus?.split(",").map(c => c.trim())
-}, improver); 
+async function improveSequence(
+  config: YogaConfig, 
+  iterations: number, 
+  minScore: number, 
+  focusCriteria?: string[]
+): Promise<YogaResult> {
+  let result: YogaResult;
+  let currentConfig = config;
+
+  for (let i = 0; i < iterations; i++) {
+    console.log(`\nIteration ${i + 1}/${iterations}`);
+    
+    if (i === 0) {
+      // First iteration: generate initial sequence
+      const improver = new YogaImprover(currentConfig, {
+        overallScore: 0,
+        recommendations: [],
+        criteriaScores: {},
+        domainSpecificMetrics: {}
+      });
+      result = await improver.improve();
+    } else {
+      // Subsequent iterations: improve based on previous evaluation
+      const improver = new YogaImprover(currentConfig, result.evaluation);
+      result = await improver.improve();
+    }
+
+    // Check if we've reached the minimum score
+    if (result.evaluation.overallScore >= minScore) {
+      console.log(`\nReached minimum score of ${minScore}`);
+      break;
+    }
+  }
+
+  return result!;
+}
+
+// Run the improvement process
+await improveSequence(
+  config, 
+  flags.iterations, 
+  flags["min-score"], 
+  flags.focus?.split(",").map(c => c.trim())
+); 

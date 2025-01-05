@@ -106,19 +106,20 @@ MIT
 ### Improvements
 
 # Basic usage with a provider
-deno run --allow-read --allow-write examples/story/improve-story.ts --provider=claude
+deno run --allow-read --allow-write examples/story/generate.ts claude
+deno run --allow-read --allow-write examples/story/improve.ts --provider=claude
 
 # Run multiple improvement iterations
-deno run --allow-read --allow-write examples/story/improve-story.ts --provider=claude --iterations=3
+deno run --allow-read --allow-write examples/story/improve.ts --provider=claude --iterations=3
 
 # Stop when reaching a minimum score
-deno run --allow-read --allow-write examples/story/improve-story.ts --provider=claude --min-score=0.85
+deno run --allow-read --allow-write examples/story/improve.ts --provider=claude --min-score=0.85
 
 # Focus on specific criteria
-deno run --allow-read --allow-write examples/story/improve-story.ts --provider=claude --focus="Character Development,Plot Coherence"
+deno run --allow-read --allow-write examples/story/improve.ts --provider=claude --focus="Character Development,Plot Coherence"
 
 # Specify a different story concept
-deno run --allow-read --allow-write examples/story/improve-story.ts --provider=claude --concept="astronaut"
+deno run --allow-read --allow-write examples/story/improve.ts --provider=claude --concept="astronaut"
 
 # Combine options
 deno run --allow-read --allow-write examples/story/improve-story.ts --provider=claude --iterations=5 --min-score=0.9 --focus="Character Development,Theme Development" --concept="detective"

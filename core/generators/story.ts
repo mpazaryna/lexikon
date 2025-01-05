@@ -9,9 +9,12 @@ import type { ProviderType, LLMResponse } from "../types.ts";
 import type { DomainConfig } from "../improvement/domain.ts";
 import { StoryEvaluator } from "../evaluation/story.ts";
 import * as providers from "../llm/providers/mod.ts";
+import { BaseGenerator } from "./base.ts";
 
 export interface StoryConfig extends DomainConfig {
   concept: string;
+  templatePath?: string;
+  template: string;
 }
 
 export interface StoryResult {
@@ -27,6 +30,22 @@ export interface StoryResult {
     completionTokens: number;
     totalTokens: number;
   };
+}
+
+export class StoryGenerator extends BaseGenerator {
+  private concept: string;
+
+  constructor(options: StoryConfig) {
+    super({
+      ...options,
+      outputFile: `story-${options.provider}.md`
+    });
+    this.concept = options.concept;
+  }
+
+  protected buildPrompt(template: string): string {
+    return template.replace("{CONCEPT}", this.concept.trim());
+  }
 }
 
 export async function generateStory(config: StoryConfig): Promise<StoryResult> {

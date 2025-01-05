@@ -9,11 +9,14 @@ import type { ProviderType, LLMResponse, TokenUsage } from "../types.ts";
 import type { DomainConfig } from "../improvement/domain.ts";
 import { YogaEvaluator } from "../evaluation/yoga.ts";
 import * as providers from "../llm/providers/mod.ts";
+import { BaseGenerator } from "./base.ts";
 
 export interface YogaConfig extends DomainConfig {
   level: string;
   duration: string;
   focus: string;
+  templatePath?: string;
+  template: string;
 }
 
 export interface YogaResult {
@@ -25,6 +28,29 @@ export interface YogaResult {
     domainSpecificMetrics: Record<string, string | number>;
   };
   usage: TokenUsage;
+}
+
+export class YogaGenerator extends BaseGenerator {
+  private level: string;
+  private duration: string;
+  private focus: string;
+
+  constructor(options: YogaConfig) {
+    super({
+      ...options,
+      outputFile: `yoga-${options.provider}.md`
+    });
+    this.level = options.level;
+    this.duration = options.duration;
+    this.focus = options.focus;
+  }
+
+  protected buildPrompt(template: string): string {
+    return template
+      .replace("{LEVEL}", this.level)
+      .replace("{DURATION}", this.duration)
+      .replace("{FOCUS}", this.focus);
+  }
 }
 
 export async function generateYogaSequence(config: YogaConfig): Promise<YogaResult> {
@@ -89,47 +115,54 @@ export async function generateYogaSequence(config: YogaConfig): Promise<YogaResu
   };
 }
 
-function createImprovementPrompt(evaluation: YogaResult["evaluation"]): string {
-  const improvements: string[] = [];
-  
-  if (evaluation.criteriaScores["Sanskrit Names"]?.score < 0.5) {
-    improvements.push("Include Sanskrit names for ALL yoga poses in parentheses after the English name");
-  }
-  
-  if (evaluation.criteriaScores["List Format"]?.score < 0.8) {
-    improvements.push("Ensure each pose instruction is properly formatted as a bullet point with a single asterisk (*)");
-  }
-  
-  if (evaluation.criteriaScores["Safety Guidelines"]?.score < 1) {
-    improvements.push("Include comprehensive safety guidelines and precautions for each section");
-  }
-  
-  if (evaluation.criteriaScores["Alignment Cues"]?.score < 1) {
-    improvements.push("Provide detailed alignment cues for each pose, at least 10 throughout the sequence");
+export class YogaImprover {
+  private config: YogaConfig;
+  private previousEvaluation: YogaResult["evaluation"];
+
+  constructor(config: YogaConfig, previousEvaluation: YogaResult["evaluation"]) {
+    this.config = config;
+    this.previousEvaluation = previousEvaluation;
   }
 
-  if (improvements.length === 0) {
-    return "";
-  }
+  private createImprovementPrompt(): string {
+    const improvements: string[] = [];
+    
+    if (this.previousEvaluation.criteriaScores["Sanskrit Names"]?.score < 0.5) {
+      improvements.push("Include Sanskrit names for ALL yoga poses in parentheses after the English name");
+    }
+    
+    if (this.previousEvaluation.criteriaScores["List Format"]?.score < 0.8) {
+      improvements.push("Ensure each pose instruction is properly formatted as a bullet point with a single asterisk (*)");
+    }
+    
+    if (this.previousEvaluation.criteriaScores["Safety Guidelines"]?.score < 1) {
+      improvements.push("Include comprehensive safety guidelines and precautions for each section");
+    }
+    
+    if (this.previousEvaluation.criteriaScores["Alignment Cues"]?.score < 1) {
+      improvements.push("Provide detailed alignment cues for each pose, at least 10 throughout the sequence");
+    }
 
-  return `
+    if (improvements.length === 0) {
+      return "";
+    }
+
+    return `
 IMPORTANT: Your previous yoga sequence needed improvements in these areas:
 ${improvements.map(imp => `- ${imp}`).join("\n")}
 
 Please generate a new sequence that specifically addresses these points while maintaining the high quality in other areas.
 
 `;
-}
+  }
 
-export async function generateImprovedYogaSequence(
-  config: YogaConfig,
-  previousEvaluation: YogaResult["evaluation"]
-): Promise<YogaResult> {
-  const improvementPrompt = createImprovementPrompt(previousEvaluation);
-  const enhancedConfig = {
-    ...config,
-    template: improvementPrompt + config.template
-  };
-  
-  return generateYogaSequence(enhancedConfig);
+  async improve(): Promise<YogaResult> {
+    const improvementPrompt = this.createImprovementPrompt();
+    const enhancedConfig = {
+      ...this.config,
+      template: improvementPrompt + this.config.template
+    };
+    
+    return generateYogaSequence(enhancedConfig);
+  }
 } 
