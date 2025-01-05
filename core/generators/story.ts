@@ -5,59 +5,95 @@
  * with customizable concepts and provider-specific output handling.
  */
 
-import type { StoryGeneratorOptions } from "../../types.ts";
+import type { DomainConfig } from "../improvement/domain.ts";
+import { StoryEvaluator } from "../evaluation/story.ts";
+import * as providers from "../llm/providers/mod.ts";
 import { BaseGenerator } from "./base.ts";
 
-/**
- * @class StoryGenerator
- * @extends BaseGenerator
- * @description Handles the generation of stories using specified LLM providers.
- * The generator takes a concept and other configuration options to produce
- * a story output in markdown format.
- */
-export class StoryGenerator extends BaseGenerator {
-  protected override options: StoryGeneratorOptions & { outputFile: string };
+export interface StoryConfig extends DomainConfig {
+  concept: string;
+  templatePath?: string;
+  template: string;
+}
 
-  /**
-   * @constructor
-   * @param {StoryGeneratorOptions} options - Configuration options for story generation
-   * @param {string} options.provider - The LLM provider to use (e.g., 'openai', 'gemini', 'claude')
-   * @param {string} options.concept - The story concept or premise to base the generation on
-   * @param {Object} options.rest - Additional configuration options inherited from BaseGenerator
-   */
-  constructor(options: StoryGeneratorOptions) {
-    const { provider, ...rest } = options;
-    const baseOptions = {
-      provider,
-      outputFile: `story-${provider}.md`,
-      ...rest,
-    };
-    super(baseOptions);
-    this.options = baseOptions;
+export interface StoryResult {
+  content: string;
+  evaluation: {
+    overallScore: number;
+    recommendations: string[];
+    criteriaScores: Record<string, { score: number; details: string[] }>;
+    domainSpecificMetrics: Record<string, string | number>;
+  };
+  usage: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+}
+
+export class StoryGenerator extends BaseGenerator {
+  private concept: string;
+
+  constructor(options: StoryConfig) {
+    super({
+      ...options,
+      outputFile: `story-${options.provider}.md`
+    });
+    this.concept = options.concept;
   }
 
-  /**
-   * @protected
-   * @method buildPrompt
-   * @param {string} template - The base template to use for prompt construction
-   * @returns {string} The complete prompt with the story concept appended
-   * @description Constructs the final prompt by combining the template with the story concept
-   */
   protected buildPrompt(template: string): string {
-    return template.replace("{CONCEPT}", this.options.concept);
+    return template.replace("{CONCEPT}", this.concept.trim());
   }
 }
 
-/**
- * @async
- * @function generateStory
- * @param {StoryGeneratorOptions} options - Configuration options for story generation
- * @returns {Promise<string>} The generated story content
- * @description A convenience function that instantiates a StoryGenerator and generates
- * a story based on the provided options. The story is returned as a string and also
- * saved to a markdown file.
- */
-export async function generateStory(options: StoryGeneratorOptions): Promise<string> {
-  const generator = new StoryGenerator(options);
-  return await generator.generate();
+export async function generateStory(config: StoryConfig): Promise<StoryResult> {
+  const prompt = config.template.replace("{CONCEPT}", config.concept.trim());
+  
+  // Generate story using specified provider
+  const provider = providers[config.provider];
+  if (!provider) {
+    throw new Error(`Provider ${config.provider} not supported`);
+  }
+
+  const response = await provider.generateContent(prompt, {
+    model: config.model,
+    maxTokens: config.maxTokens,
+    temperature: config.temperature
+  });
+
+  // Evaluate the generated story
+  const evaluator = new StoryEvaluator(config.template, {
+    name: "Story",
+    description: "A creative story with well-developed characters and themes",
+    templatePath: config.templatePath ?? "examples/story/templates/hero-journey.txt",
+    outputPath: config.outputPath,
+    evaluationPath: config.evaluationPath
+  });
+
+  const evaluation = evaluator.evaluateStory({
+    ...response,
+    model: config.model,
+    provider: config.provider
+  });
+
+  // Log evaluation results
+  console.log("\nStory Evaluation Results:");
+  console.log(`Overall Score: ${(evaluation.overallScore * 100).toFixed(1)}%`);
+  
+  if (evaluation.recommendations.length > 0) {
+    console.log("\nRecommendations for Improvement:");
+    evaluation.recommendations.forEach(rec => console.log(`- ${rec}`));
+  }
+
+  return {
+    content: response.content,
+    evaluation: {
+      overallScore: evaluation.overallScore,
+      recommendations: evaluation.recommendations,
+      criteriaScores: evaluation.criteriaScores,
+      domainSpecificMetrics: evaluation.domainSpecificMetrics ?? {}
+    },
+    usage: response.usage
+  };
 } 

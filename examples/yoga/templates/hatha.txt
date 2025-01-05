@@ -1,4 +1,4 @@
-As an experienced yoga instructor, create a comprehensive class plan for teaching {CONCEPT}. 
+As an experienced yoga instructor, create a comprehensive class plan for a {DURATION} {LEVEL}-level yoga sequence focusing on {FOCUS}.
 
 Follow the formatting requirements exactly. 
 
@@ -107,8 +107,8 @@ Provide a detailed overview including:
 
 ## Class Structure
 
-* Total Duration: [Specify minutes]
-* Level: [Beginner/Intermediate/Advanced]
+* Total Duration: {DURATION}
+* Level: {LEVEL}
 * Props Needed: [List required and optional props]
 * Room Setup: [Environmental requirements]
 

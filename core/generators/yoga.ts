@@ -5,78 +5,164 @@
  * based on specified difficulty levels, durations, and focus areas.
  */
 
-import type { YogaGeneratorOptions } from "../../types.ts";
+import type { LLMResponse, TokenUsage } from "../types.ts";
+import type { DomainConfig } from "../improvement/domain.ts";
+import { YogaEvaluator } from "../evaluation/yoga.ts";
+import * as providers from "../llm/providers/mod.ts";
 import { BaseGenerator } from "./base.ts";
 
-/**
- * @class YogaGenerator
- * @extends BaseGenerator
- * @description Handles the generation of yoga sequences using specified LLM providers.
- * The generator creates personalized yoga routines based on skill level,
- * time duration, and specific focus areas for practice.
- */
+export interface YogaConfig extends DomainConfig {
+  level: string;
+  duration: string;
+  focus: string;
+  templatePath?: string;
+  template: string;
+}
+
+export interface YogaResult {
+  content: string;
+  evaluation: {
+    overallScore: number;
+    recommendations: string[];
+    criteriaScores: Record<string, { score: number; details: string[] }>;
+    domainSpecificMetrics: Record<string, string | number>;
+  };
+  usage: TokenUsage;
+}
+
 export class YogaGenerator extends BaseGenerator {
-  protected override options: YogaGeneratorOptions & { outputFile: string };
+  private level: string;
+  private duration: string;
+  private focus: string;
 
-  /**
-   * @constructor
-   * @param {YogaGeneratorOptions} options - Configuration options for yoga sequence generation
-   * @param {string} options.provider - The LLM provider to use (e.g., 'openai', 'gemini', 'claude')
-   * @param {string} [options.level="beginner"] - Difficulty level of the yoga sequence
-   * @param {string} [options.duration="60 minutes"] - Length of the yoga session
-   * @param {string} [options.focus="strength and flexibility"] - Specific focus area for the practice
-   * @param {Object} options.rest - Additional configuration options inherited from BaseGenerator
-   */
-  constructor(options: YogaGeneratorOptions) {
-    const { provider, ...rest } = options;
-    const baseOptions = {
-      provider,
-      outputFile: `yoga-${provider}.md`,
-      level: "beginner",
-      duration: "60 minutes",
-      focus: "strength and flexibility",
-      ...rest,
-    };
-    super(baseOptions);
-    this.options = baseOptions;
+  constructor(options: YogaConfig) {
+    super({
+      ...options,
+      outputFile: `yoga-${options.provider}.md`
+    });
+    this.level = options.level;
+    this.duration = options.duration;
+    this.focus = options.focus;
   }
 
-  /**
-   * @protected
-   * @method buildConcept
-   * @returns {string} A concept description based on teaching parameters
-   * @description Builds a standardized concept description from the level, duration,
-   * and focus parameters that guides the sequence generation
-   */
-  protected buildConcept(): string {
-    const { level, duration, focus } = this.options;
-    return `${duration} ${level}-level yoga sequence focusing on ${focus}`;
-  }
-
-  /**
-   * @protected
-   * @method buildPrompt
-   * @param {string} template - The base template to use for prompt construction
-   * @returns {string} The complete prompt with yoga-specific parameters
-   * @description Constructs the final prompt by combining the template with
-   * the teaching concept built from level, duration, and focus parameters
-   */
   protected buildPrompt(template: string): string {
-    const concept = this.buildConcept();
-    return template.replace("{CONCEPT}", concept);
+    return template
+      .replace("{LEVEL}", this.level)
+      .replace("{DURATION}", this.duration)
+      .replace("{FOCUS}", this.focus);
   }
 }
 
-/**
- * @async
- * @function generateYogaSequence
- * @param {YogaGeneratorOptions} options - Configuration options for yoga sequence generation
- * @returns {Promise<string>} The generated yoga sequence content
- * @description A convenience function that instantiates a YogaGenerator and generates
- * a customized yoga sequence based on the provided options. The sequence is returned
- * as a string and saved to a markdown file.
- */
-export async function generateYogaSequence(options: YogaGeneratorOptions): Promise<string> {
-  const generator = new YogaGenerator(options);
-  return await generator.generate();
+export async function generateYogaSequence(config: YogaConfig): Promise<YogaResult> {
+  const prompt = config.template
+    .replace("{LEVEL}", config.level)
+    .replace("{DURATION}", config.duration)
+    .replace("{FOCUS}", config.focus);
+  
+  // Generate sequence using specified provider
+  const provider = providers[config.provider];
+  if (!provider) {
+    throw new Error(`Provider ${config.provider} not supported`);
+  }
+
+  const rawResponse = await provider.generateContent(prompt, {
+    model: config.model,
+    maxTokens: config.maxTokens,
+    temperature: config.temperature
+  });
+
+  // Ensure response has required fields
+  const response: LLMResponse = {
+    content: rawResponse.content,
+    usage: rawResponse.usage ?? {
+      promptTokens: 0,
+      completionTokens: 0,
+      totalTokens: 0
+    },
+    model: config.model,
+    provider: config.provider
+  };
+
+  // Evaluate the generated sequence
+  const evaluator = new YogaEvaluator(config.template, {
+    name: "Yoga Sequence",
+    description: "A structured yoga practice sequence with proper form and safety guidelines",
+    templatePath: "examples/yoga/templates/hatha.txt",
+    outputPath: "output/yoga-{provider}.md",
+    evaluationPath: "output/yoga-evaluation-{provider}.md"
+  });
+
+  const evaluation = evaluator.evaluateYogaSequence(response);
+
+  // Log evaluation results
+  console.log("\nYoga Sequence Evaluation Results:");
+  console.log(`Overall Score: ${(evaluation.overallScore * 100).toFixed(1)}%`);
+  
+  if (evaluation.recommendations.length > 0) {
+    console.log("\nRecommendations for Improvement:");
+    evaluation.recommendations.forEach(rec => console.log(`- ${rec}`));
+  }
+
+  return {
+    content: response.content,
+    evaluation: {
+      overallScore: evaluation.overallScore,
+      recommendations: evaluation.recommendations,
+      criteriaScores: evaluation.criteriaScores,
+      domainSpecificMetrics: evaluation.domainSpecificMetrics ?? {}
+    },
+    usage: response.usage
+  };
+}
+
+export class YogaImprover {
+  private config: YogaConfig;
+  private previousEvaluation: YogaResult["evaluation"];
+
+  constructor(config: YogaConfig, previousEvaluation: YogaResult["evaluation"]) {
+    this.config = config;
+    this.previousEvaluation = previousEvaluation;
+  }
+
+  private createImprovementPrompt(): string {
+    const improvements: string[] = [];
+    
+    if (this.previousEvaluation.criteriaScores["Sanskrit Names"]?.score < 0.5) {
+      improvements.push("Include Sanskrit names for ALL yoga poses in parentheses after the English name");
+    }
+    
+    if (this.previousEvaluation.criteriaScores["List Format"]?.score < 0.8) {
+      improvements.push("Ensure each pose instruction is properly formatted as a bullet point with a single asterisk (*)");
+    }
+    
+    if (this.previousEvaluation.criteriaScores["Safety Guidelines"]?.score < 1) {
+      improvements.push("Include comprehensive safety guidelines and precautions for each section");
+    }
+    
+    if (this.previousEvaluation.criteriaScores["Alignment Cues"]?.score < 1) {
+      improvements.push("Provide detailed alignment cues for each pose, at least 10 throughout the sequence");
+    }
+
+    if (improvements.length === 0) {
+      return "";
+    }
+
+    return `
+IMPORTANT: Your previous yoga sequence needed improvements in these areas:
+${improvements.map(imp => `- ${imp}`).join("\n")}
+
+Please generate a new sequence that specifically addresses these points while maintaining the high quality in other areas.
+
+`;
+  }
+
+  async improve(): Promise<YogaResult> {
+    const improvementPrompt = this.createImprovementPrompt();
+    const enhancedConfig = {
+      ...this.config,
+      template: improvementPrompt + this.config.template
+    };
+    
+    return await generateYogaSequence(enhancedConfig);
+  }
 } 

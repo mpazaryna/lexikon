@@ -12,8 +12,12 @@ export { generateContent as groqProvider } from "./core/llm/providers/groq.ts";
 export { generateContent as geminiProvider } from "./core/llm/providers/gemini.ts";
 
 // Generator exports
-export { generateStory, StoryGenerator } from "./core/generators/story.ts";
-export { generateYogaSequence, YogaGenerator } from "./core/generators/yoga.ts";
+export { generateStory, StoryGenerator, type StoryConfig } from "./core/generators/story.ts";
+export { generateYogaSequence, YogaGenerator, YogaImprover } from "./core/generators/yoga.ts";
+
+// Improvement exports
+export { improveContent } from "./core/improvement/domain.ts";
+export { StoryImprover } from "./core/improvement/story.ts";
 
 // Monitoring exports
 export { usageTracker, UsageTracker, type UsageMetrics, type CostMetrics } from "./core/monitoring/index.ts";
