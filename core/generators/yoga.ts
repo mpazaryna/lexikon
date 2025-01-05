@@ -5,78 +5,135 @@
  * based on specified difficulty levels, durations, and focus areas.
  */
 
-import type { YogaGeneratorOptions } from "../../types.ts";
-import { BaseGenerator } from "./base.ts";
+import type { ProviderType, LLMResponse, TokenUsage } from "../types.ts";
+import { YogaEvaluator } from "../evaluation/yoga.ts";
+import * as providers from "../llm/providers/mod.ts";
 
-/**
- * @class YogaGenerator
- * @extends BaseGenerator
- * @description Handles the generation of yoga sequences using specified LLM providers.
- * The generator creates personalized yoga routines based on skill level,
- * time duration, and specific focus areas for practice.
- */
-export class YogaGenerator extends BaseGenerator {
-  protected override options: YogaGeneratorOptions & { outputFile: string };
-
-  /**
-   * @constructor
-   * @param {YogaGeneratorOptions} options - Configuration options for yoga sequence generation
-   * @param {string} options.provider - The LLM provider to use (e.g., 'openai', 'gemini', 'claude')
-   * @param {string} [options.level="beginner"] - Difficulty level of the yoga sequence
-   * @param {string} [options.duration="60 minutes"] - Length of the yoga session
-   * @param {string} [options.focus="strength and flexibility"] - Specific focus area for the practice
-   * @param {Object} options.rest - Additional configuration options inherited from BaseGenerator
-   */
-  constructor(options: YogaGeneratorOptions) {
-    const { provider, ...rest } = options;
-    const baseOptions = {
-      provider,
-      outputFile: `yoga-${provider}.md`,
-      level: "beginner",
-      duration: "60 minutes",
-      focus: "strength and flexibility",
-      ...rest,
-    };
-    super(baseOptions);
-    this.options = baseOptions;
-  }
-
-  /**
-   * @protected
-   * @method buildConcept
-   * @returns {string} A concept description based on teaching parameters
-   * @description Builds a standardized concept description from the level, duration,
-   * and focus parameters that guides the sequence generation
-   */
-  protected buildConcept(): string {
-    const { level, duration, focus } = this.options;
-    return `${duration} ${level}-level yoga sequence focusing on ${focus}`;
-  }
-
-  /**
-   * @protected
-   * @method buildPrompt
-   * @param {string} template - The base template to use for prompt construction
-   * @returns {string} The complete prompt with yoga-specific parameters
-   * @description Constructs the final prompt by combining the template with
-   * the teaching concept built from level, duration, and focus parameters
-   */
-  protected buildPrompt(template: string): string {
-    const concept = this.buildConcept();
-    return template.replace("{CONCEPT}", concept);
-  }
+export interface YogaConfig {
+  provider: ProviderType;
+  model: string;
+  maxTokens: number;
+  temperature: number;
+  template: string;
+  level: string;
+  duration: string;
+  focus: string;
 }
 
-/**
- * @async
- * @function generateYogaSequence
- * @param {YogaGeneratorOptions} options - Configuration options for yoga sequence generation
- * @returns {Promise<string>} The generated yoga sequence content
- * @description A convenience function that instantiates a YogaGenerator and generates
- * a customized yoga sequence based on the provided options. The sequence is returned
- * as a string and saved to a markdown file.
- */
-export async function generateYogaSequence(options: YogaGeneratorOptions): Promise<string> {
-  const generator = new YogaGenerator(options);
-  return await generator.generate();
+export interface YogaResult {
+  content: string;
+  evaluation: {
+    overallScore: number;
+    recommendations: string[];
+    criteriaScores: Record<string, { score: number; details: string[] }>;
+    domainSpecificMetrics: Record<string, string | number>;
+  };
+  usage: TokenUsage;
+}
+
+export async function generateYogaSequence(config: YogaConfig): Promise<YogaResult> {
+  const prompt = config.template
+    .replace("{LEVEL}", config.level)
+    .replace("{DURATION}", config.duration)
+    .replace("{FOCUS}", config.focus);
+  
+  // Generate sequence using specified provider
+  const provider = providers[config.provider];
+  if (!provider) {
+    throw new Error(`Provider ${config.provider} not supported`);
+  }
+
+  const rawResponse = await provider.generateContent(prompt, {
+    model: config.model,
+    maxTokens: config.maxTokens,
+    temperature: config.temperature
+  });
+
+  // Ensure response has required fields
+  const response: LLMResponse = {
+    content: rawResponse.content,
+    usage: rawResponse.usage ?? {
+      promptTokens: 0,
+      completionTokens: 0,
+      totalTokens: 0
+    },
+    model: config.model,
+    provider: config.provider
+  };
+
+  // Evaluate the generated sequence
+  const evaluator = new YogaEvaluator(config.template, {
+    name: "Yoga Sequence",
+    description: "A structured yoga practice sequence with proper form and safety guidelines",
+    templatePath: "examples/yoga/templates/hatha.txt",
+    outputPath: "output/yoga-{provider}.md",
+    evaluationPath: "output/yoga-evaluation-{provider}.md"
+  });
+
+  const evaluation = evaluator.evaluateYogaSequence(response);
+
+  // Log evaluation results
+  console.log("\nYoga Sequence Evaluation Results:");
+  console.log(`Overall Score: ${(evaluation.overallScore * 100).toFixed(1)}%`);
+  
+  if (evaluation.recommendations.length > 0) {
+    console.log("\nRecommendations for Improvement:");
+    evaluation.recommendations.forEach(rec => console.log(`- ${rec}`));
+  }
+
+  return {
+    content: response.content,
+    evaluation: {
+      overallScore: evaluation.overallScore,
+      recommendations: evaluation.recommendations,
+      criteriaScores: evaluation.criteriaScores,
+      domainSpecificMetrics: evaluation.domainSpecificMetrics ?? {}
+    },
+    usage: response.usage
+  };
+}
+
+function createImprovementPrompt(evaluation: YogaResult["evaluation"]): string {
+  const improvements: string[] = [];
+  
+  if (evaluation.criteriaScores["Sanskrit Names"]?.score < 0.5) {
+    improvements.push("Include Sanskrit names for ALL yoga poses in parentheses after the English name");
+  }
+  
+  if (evaluation.criteriaScores["List Format"]?.score < 0.8) {
+    improvements.push("Ensure each pose instruction is properly formatted as a bullet point with a single asterisk (*)");
+  }
+  
+  if (evaluation.criteriaScores["Safety Guidelines"]?.score < 1) {
+    improvements.push("Include comprehensive safety guidelines and precautions for each section");
+  }
+  
+  if (evaluation.criteriaScores["Alignment Cues"]?.score < 1) {
+    improvements.push("Provide detailed alignment cues for each pose, at least 10 throughout the sequence");
+  }
+
+  if (improvements.length === 0) {
+    return "";
+  }
+
+  return `
+IMPORTANT: Your previous yoga sequence needed improvements in these areas:
+${improvements.map(imp => `- ${imp}`).join("\n")}
+
+Please generate a new sequence that specifically addresses these points while maintaining the high quality in other areas.
+
+`;
+}
+
+export async function generateImprovedYogaSequence(
+  config: YogaConfig,
+  previousEvaluation: YogaResult["evaluation"]
+): Promise<YogaResult> {
+  const improvementPrompt = createImprovementPrompt(previousEvaluation);
+  const enhancedConfig = {
+    ...config,
+    template: improvementPrompt + config.template
+  };
+  
+  return generateYogaSequence(enhancedConfig);
 } 

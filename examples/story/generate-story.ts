@@ -36,7 +36,7 @@ async function generateStoryFromTemplate(provider: Provider) {
   const template = await Deno.readTextFile(templatePath);
   const concept = await Deno.readTextFile(conceptPath);
   
-  await generateStory({
+  const result = await generateStory({
     provider,
     temperature: 0.7,
     ...PROVIDER_CONFIGS[provider],
@@ -44,9 +44,60 @@ async function generateStoryFromTemplate(provider: Provider) {
     concept
   });
 
+  // Save the generated story
+  const outputPath = join(dirname(fromFileUrl(import.meta.url)), "..", "..", "output", `story-${provider}.md`);
+  await Deno.writeTextFile(outputPath, result.content);
+  console.log(`\nStory saved to: ${outputPath}`);
+
+  // Save evaluation results
+  const evaluationPath = join(dirname(fromFileUrl(import.meta.url)), "..", "..", "output", `story-evaluation-${provider}.md`);
+  const evaluationContent = [
+    `# Story Evaluation Results - ${provider.toUpperCase()}`,
+    "",
+    `## Overall Score: ${(result.evaluation.overallScore * 100).toFixed(1)}%`,
+    "",
+    "## Detailed Scores",
+    ...Object.entries(result.evaluation.criteriaScores).map(([criterion, score]) => [
+      `### ${criterion}: ${(score.score * 100).toFixed(1)}%`,
+      ...score.details.map(detail => `- ${detail}`),
+      score.missingElements?.length ? `- Missing: ${score.missingElements.join(", ")}` : "",
+      ""
+    ]).flat(),
+    "## Recommendations",
+    ...result.evaluation.recommendations.map(rec => `- ${rec}`),
+    "",
+    "## Usage Statistics",
+    `- Total API calls: ${usageTracker.getUsageStats().totalCalls}`,
+    `- Success rate: ${usageTracker.getUsageStats().successRate.toFixed(1)}%`,
+    `- Average latency: ${usageTracker.getUsageStats().averageLatency.toFixed(0)}ms`,
+    `- Total tokens used: ${usageTracker.getUsageStats().totalTokens}`,
+    `- Estimated cost: $${usageTracker.getUsageStats().totalCost.toFixed(4)}`,
+    "",
+    "## Generation Details",
+    `- Model: ${PROVIDER_CONFIGS[provider].model}`,
+    `- Max tokens: ${PROVIDER_CONFIGS[provider].maxTokens}`,
+    `- Temperature: 0.7`,
+    `- Timestamp: ${new Date().toISOString()}`
+  ].join("\n");
+
+  await Deno.writeTextFile(evaluationPath, evaluationContent);
+  console.log(`Evaluation results saved to: ${evaluationPath}`);
+
+  // Display evaluation results
+  console.log("\nEvaluation Details:");
+  Object.entries(result.evaluation.criteriaScores).forEach(([criterion, score]) => {
+    console.log(`${criterion}: ${(score.score * 100).toFixed(1)}%`);
+    score.details.forEach(detail => console.log(`  - ${detail}`));
+  });
+
+  if (result.evaluation.recommendations.length > 0) {
+    console.log("\nRecommendations for Improvement:");
+    result.evaluation.recommendations.forEach(rec => console.log(`- ${rec}`));
+  }
+
   // Display usage statistics
   const stats = usageTracker.getUsageStats();
-  console.log("\n Usage Statistics:");
+  console.log("\nUsage Statistics:");
   console.log(`Total API calls: ${stats.totalCalls}`);
   console.log(`Success rate: ${stats.successRate.toFixed(1)}%`);
   console.log(`Average latency: ${stats.averageLatency.toFixed(0)}ms`);
@@ -58,17 +109,13 @@ async function generateStoryFromTemplate(provider: Provider) {
   }
 }
 
-// Main execution
+// If this module is run directly, generate stories for all providers
 if (import.meta.main) {
   const provider = Deno.args[0] as Provider;
-  
   if (!provider || !PROVIDER_CONFIGS[provider]) {
-    console.log("Please specify which provider to run:");
-    console.log("Available providers:", Object.keys(PROVIDER_CONFIGS).join(", "));
-    console.log("\nExample:");
-    console.log("  deno run --allow-net --allow-env --allow-read --allow-write examples/story/generate-story.ts openai");
+    console.error("Please specify a valid provider: openai, claude, gemini, or groq");
     Deno.exit(1);
   }
-
+  
   await generateStoryFromTemplate(provider);
 } 
