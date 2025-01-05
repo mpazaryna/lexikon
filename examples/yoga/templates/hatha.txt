@@ -1,5 +1,7 @@
 As an experienced yoga instructor, create a comprehensive class plan for teaching {CONCEPT}. 
 
+Follow the formatting requirements exactly. 
+
 FORMATTING REQUIREMENTS:
 - Include exactly ONE blank line after every heading
 - Include exactly ONE blank line between paragraphs

@@ -31,7 +31,7 @@ export class YogaGenerator extends BaseGenerator {
     const { provider, ...rest } = options;
     const baseOptions = {
       provider,
-      outputFile: "yoga-sequence.md",
+      outputFile: `yoga-${provider}.md`,
       level: "beginner",
       duration: "60 minutes",
       focus: "strength and flexibility",
@@ -43,15 +43,27 @@ export class YogaGenerator extends BaseGenerator {
 
   /**
    * @protected
+   * @method buildConcept
+   * @returns {string} A concept description based on teaching parameters
+   * @description Builds a standardized concept description from the level, duration,
+   * and focus parameters that guides the sequence generation
+   */
+  protected buildConcept(): string {
+    const { level, duration, focus } = this.options;
+    return `${duration} ${level}-level yoga sequence focusing on ${focus}`;
+  }
+
+  /**
+   * @protected
    * @method buildPrompt
    * @param {string} template - The base template to use for prompt construction
    * @returns {string} The complete prompt with yoga-specific parameters
    * @description Constructs the final prompt by combining the template with
-   * the specified level, duration, and focus area for the yoga sequence
+   * the teaching concept built from level, duration, and focus parameters
    */
   protected buildPrompt(template: string): string {
-    const { level, duration, focus } = this.options;
-    return `${template}\n\nLevel: ${level}\nDuration: ${duration}\nFocus: ${focus}`;
+    const concept = this.buildConcept();
+    return template.replace("{CONCEPT}", concept);
   }
 }
 

@@ -44,7 +44,7 @@ export class StoryGenerator extends BaseGenerator {
    * @description Constructs the final prompt by combining the template with the story concept
    */
   protected buildPrompt(template: string): string {
-    return `${template}\n\nConcept: ${this.options.concept}`;
+    return template.replace("{CONCEPT}", this.options.concept);
   }
 }
 
