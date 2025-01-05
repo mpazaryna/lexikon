@@ -6,15 +6,11 @@
  */
 
 import type { ProviderType, LLMResponse } from "../types.ts";
+import type { DomainConfig } from "../improvement/domain.ts";
 import { StoryEvaluator } from "../evaluation/story.ts";
 import * as providers from "../llm/providers/mod.ts";
 
-export interface StoryConfig {
-  provider: ProviderType;
-  model: string;
-  maxTokens: number;
-  temperature: number;
-  template: string;
+export interface StoryConfig extends DomainConfig {
   concept: string;
 }
 
@@ -24,6 +20,7 @@ export interface StoryResult {
     overallScore: number;
     recommendations: string[];
     criteriaScores: Record<string, { score: number; details: string[] }>;
+    domainSpecificMetrics: Record<string, string | number>;
   };
   usage: {
     promptTokens: number;
@@ -48,7 +45,14 @@ export async function generateStory(config: StoryConfig): Promise<StoryResult> {
   });
 
   // Evaluate the generated story
-  const evaluator = new StoryEvaluator(config.template);
+  const evaluator = new StoryEvaluator(config.template, {
+    name: "Story",
+    description: "A creative story with well-developed characters and themes",
+    templatePath: config.templatePath ?? "examples/story/templates/hero-journey.txt",
+    outputPath: config.outputPath,
+    evaluationPath: config.evaluationPath
+  });
+
   const evaluation = evaluator.evaluateStory({
     ...response,
     model: config.model,
@@ -69,7 +73,8 @@ export async function generateStory(config: StoryConfig): Promise<StoryResult> {
     evaluation: {
       overallScore: evaluation.overallScore,
       recommendations: evaluation.recommendations,
-      criteriaScores: evaluation.criteriaScores
+      criteriaScores: evaluation.criteriaScores,
+      domainSpecificMetrics: evaluation.domainSpecificMetrics ?? {}
     },
     usage: response.usage
   };

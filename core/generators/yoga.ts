@@ -6,15 +6,11 @@
  */
 
 import type { ProviderType, LLMResponse, TokenUsage } from "../types.ts";
+import type { DomainConfig } from "../improvement/domain.ts";
 import { YogaEvaluator } from "../evaluation/yoga.ts";
 import * as providers from "../llm/providers/mod.ts";
 
-export interface YogaConfig {
-  provider: ProviderType;
-  model: string;
-  maxTokens: number;
-  temperature: number;
-  template: string;
+export interface YogaConfig extends DomainConfig {
   level: string;
   duration: string;
   focus: string;

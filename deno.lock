@@ -3,6 +3,7 @@
   "specifiers": {
     "jsr:@std/assert@*": "0.217.0",
     "jsr:@std/assert@0.217": "0.217.0",
+    "jsr:@std/flags@0.217.0": "0.217.0",
     "jsr:@std/fmt@0.217": "0.217.0",
     "jsr:@std/fs@0.217.0": "0.217.0",
     "jsr:@std/path@0.217": "0.217.0",
@@ -13,6 +14,12 @@
       "integrity": "c98e279362ca6982d5285c3b89517b757c1e3477ee9f14eb2fdf80a45aaa9642",
       "dependencies": [
         "jsr:@std/fmt"
+      ]
+    },
+    "@std/flags@0.217.0": {
+      "integrity": "2d67502692d76cfe37fba1c4a92d0a5fe0a6f9601900fd7c510936b0e4e0242e",
+      "dependencies": [
+        "jsr:@std/assert@0.217"
       ]
     },
     "@std/fmt@0.217.0": {
@@ -151,6 +158,7 @@
   },
   "workspace": {
     "dependencies": [
+      "jsr:@std/flags@0.217.0",
       "jsr:@std/fs@0.217.0",
       "jsr:@std/path@0.217.0"
     ]
