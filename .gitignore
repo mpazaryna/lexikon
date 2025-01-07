@@ -7,5 +7,5 @@ output/*
 !output/README.md
 
 # Generated documentation
-docs/api/
+docs/api/*
 !docs/api/README.md
