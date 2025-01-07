@@ -3,4 +3,5 @@
 *.code-workspace
 temp.txt
 .env
-output/
+output/*
+!output/README.md
