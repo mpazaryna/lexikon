@@ -4,7 +4,7 @@
 
 Lexikon provides a lightweight, standardized interface for interacting with Large Language Models (LLMs), inspired by the simplicity and effectiveness of ODBC (Open Database Connectivity) drivers. Just as ODBC standardized database interactions across different systems, Lexikon aims to standardize LLM interactions while maintaining simplicity and flexibility.
 
-## Background Rationale
+## Rationale
 
 The development of Lexikon was motivated by a common pattern in LLM application development: the repeated implementation of similar infrastructure code across projects. This pattern mirrors the historical challenge in database connectivity that ODBC solved.
 
@@ -46,12 +46,6 @@ While LangChain is a powerful framework, it often introduces unnecessary complex
 - File Handling
 - Response Processing
 - Error Management
-
-## Installation
-
-```bash
-# Coming soon
-```
 
 ## Usage
 
@@ -95,31 +89,6 @@ Lexikon is built on three core principles:
 
 Like ODBC drivers of the past, Lexikon aims to be the standard interface between applications and language models, providing a clean, consistent API while handling the complexity of different provider implementations.
 
-## Contributing
-
-Contributions are welcome! Please read our contributing guidelines for details.
-
 ## License
 
-MIT
-
-### Improvements
-
-# Basic usage with a provider
-deno run --allow-read --allow-write examples/story/generate.ts --provider=claude
-deno run --allow-read --allow-write examples/story/improve.ts --provider=claude
-
-# Run multiple improvement iterations
-deno run --allow-read --allow-write examples/story/improve.ts --provider=claude --iterations=3
-
-# Stop when reaching a minimum score
-deno run --allow-read --allow-write examples/story/improve.ts --provider=claude --min-score=0.85
-
-# Focus on specific criteria
-deno run --allow-read --allow-write examples/story/improve.ts --provider=claude --focus="Character Development,Plot Coherence"
-
-# Specify a different story concept
-deno run --allow-read --allow-write examples/story/improve.ts --provider=claude --concept="astronaut"
-
-# Combine options
-deno run --allow-read --allow-write examples/story/improve-story.ts --provider=claude --iterations=5 --min-score=0.9 --focus="Character Development,Theme Development" --concept="detective"
+Proprietary License
