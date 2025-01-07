@@ -13,5 +13,5 @@ deno run --allow-net --allow-env --allow-read --allow-write examples/yoga/genera
 
 ```bash
 # Basic usage
-deno run --allow-read --allow-write examples/yoga/improve.ts --provider=claude
+deno run --allow-net --allow-env --allow-read --allow-write examples/yoga/improve.ts --provider=claude
 ```
