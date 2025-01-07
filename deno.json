@@ -13,5 +13,8 @@
     "strict": true,
     "lib": ["deno.window", "deno.ns"],
     "types": ["deno"]
+  },
+  "tasks": {
+    "docs": "deno doc --html --name=Lexikon --output=docs/api mod.ts"
   }
 }

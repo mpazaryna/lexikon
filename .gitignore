@@ -5,3 +5,7 @@ temp.txt
 .env
 output/*
 !output/README.md
+
+# Generated documentation
+docs/api/
+!docs/api/README.md
