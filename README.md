@@ -1,6 +1,6 @@
 # Lexikon: A Language Model Interface Framework
 
-![Lexikon Logo](../assets/logo.jpeg)
+![Lexikon Logo](/assets/logo.jpeg)
 
 ## Background
 
