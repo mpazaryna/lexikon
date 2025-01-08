@@ -1,6 +1,6 @@
 # Lexikon: A Language Model Interface Framework
 
-[![Deno](https://github.com/mpazaryna/lexicon/actions/workflows/deno.yml/badge.svg)](https://github.com/mpazaryna/lexicon/actions/workflows/deno.yml)
+[![Deno](https://github.com/mpazaryna/lexikon/actions/workflows/deno.yml/badge.svg)](https://github.com/mpazaryna/lexikon/actions/workflows/deno.yml)
 
 <img src="/assets/logo.jpeg" width="500" alt="Lexikon Logo">
 
