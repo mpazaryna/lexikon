@@ -1,5 +1,7 @@
 # Lexikon: A Language Model Interface Framework
 
+![Lexikon Logo](../assets/logo.jpeg)
+
 ## Background
 
 Lexikon provides a lightweight, standardized interface for interacting with Large Language Models (LLMs), inspired by the simplicity and effectiveness of ODBC (Open Database Connectivity) drivers. Just as ODBC standardized database interactions across different systems, Lexikon aims to standardize LLM interactions while maintaining simplicity and flexibility.
