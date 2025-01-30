@@ -1,77 +1,75 @@
-import { LLMFactory, LLMProviderType, ClaudeError, OpenAIError } from "../mod.ts";
+import { LLMFactory, LLMProviderType, ClaudeError, OpenAIError, MixtralError, GeminiError } from "../mod.ts";
 
-// Example using a specific provider
-async function singleProviderExample() {
-  const claude = LLMFactory.createProvider(LLMProviderType.CLAUDE);
-  
+// Example using factory pattern to create and use any provider
+async function providerExample(type: LLMProviderType) {
+  const provider = LLMFactory.createProvider(type);
   try {
-    const response = await claude.chat("What's the capital of France?");
-    console.log("Claude's response:", response);
+    console.log(`\n=== ${type.toUpperCase()} ===`);
+    const response = await provider.chat("What's the capital of France?");
+    console.log(`Response: ${response}`);
+    console.log("=".repeat(20));
   } catch (error) {
-    if (error instanceof ClaudeError) {
-      console.error("Claude Error:", error.message);
+    if (error instanceof ClaudeError || 
+        error instanceof OpenAIError || 
+        error instanceof MixtralError ||
+        error instanceof GeminiError) {
+      console.error(`${type} Error:`, error.message);
     } else {
       console.error("Unexpected error:", error);
     }
+    console.log("=".repeat(20));
   }
 }
 
-// Example using multiple providers
+// Example using multiple providers through factory
 async function multiProviderExample() {
-  const claude = LLMFactory.createProvider(LLMProviderType.CLAUDE);
-  const openai = LLMFactory.createProvider(LLMProviderType.OPENAI);
+  const providers = Object.values(LLMProviderType).map(type => ({
+    type,
+    provider: LLMFactory.createProvider(type)
+  }));
   
   const prompt = "What is the best programming language? Answer in one word.";
+  console.log("\nPrompt:", prompt);
+  console.log("=".repeat(50));
   
   try {
-    // Ask both AIs the same question
-    const [claudeResponse, openaiResponse] = await Promise.all([
-      claude.chat(prompt),
-      openai.chat(prompt),
-    ]);
+    const responses = await Promise.all(
+      providers.map(({ type, provider }) => 
+        provider.chat(prompt)
+          .then(response => ({ type, response: response.trim() }))
+          .catch(error => ({ type, error }))
+      )
+    );
     
-    console.log("Claude says:", claudeResponse.trim());
-    console.log("OpenAI says:", openaiResponse.trim());
-  } catch (error) {
-    if (error instanceof ClaudeError) {
-      console.error("Claude Error:", error.message);
-    } else if (error instanceof OpenAIError) {
-      console.error("OpenAI Error:", error.message);
-    } else {
-      console.error("Unexpected error:", error);
-    }
-  }
-}
-
-// Example of error handling with different providers
-async function errorHandlingExample() {
-  const providers = [
-    { name: "Claude", provider: LLMFactory.createProvider(LLMProviderType.CLAUDE) },
-    { name: "OpenAI", provider: LLMFactory.createProvider(LLMProviderType.OPENAI) }
-  ];
-  
-  for (const { name, provider } of providers) {
-    try {
-      // Intentionally pass an empty message to trigger an error
-      await provider.chat("");
-    } catch (error) {
-      if (error instanceof ClaudeError || error instanceof OpenAIError) {
-        console.log(`${name} error caught successfully:`, error.message);
+    responses.forEach(({ type, response, error }) => {
+      if (error) {
+        console.error(`${type.padEnd(10)} │ Error: ${error.message}`);
+      } else {
+        console.log(`${type.padEnd(10)} │ ${response}`);
       }
-    }
+      console.log("-".repeat(50));
+    });
+  } catch (error) {
+    console.error("Unexpected error:", error);
   }
 }
 
 // Run examples
 if (import.meta.main) {
-  console.log("Running LLM examples...\n");
+  console.log("=".repeat(50));
+  console.log("Running LLM Examples");
+  console.log("=".repeat(50));
   
-  console.log("1. Single Provider Example:");
-  await singleProviderExample();
+  console.log("\n1. Single Provider Examples");
+  console.log("-".repeat(25));
+  for (const type of Object.values(LLMProviderType)) {
+    await providerExample(type);
+  }
   
-  console.log("\n2. Multiple Provider Example:");
+  console.log("\n2. Multiple Provider Example");
+  console.log("-".repeat(25));
   await multiProviderExample();
   
-  console.log("\n3. Error Handling Example:");
-  await errorHandlingExample();
+  console.log("\nDone!");
+  console.log("=".repeat(50));
 } 

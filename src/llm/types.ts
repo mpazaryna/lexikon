@@ -16,4 +16,6 @@ export interface LLMProvider {
 export enum LLMProviderType {
   CLAUDE = "claude",
   OPENAI = "openai",
+  GEMINI = "gemini",
+  MIXTRAL = "mixtral"
 } 

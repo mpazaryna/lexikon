@@ -18,3 +18,5 @@ export { LLMFactory } from "./src/llm/factory.ts";
 // Export provider implementations and their errors
 export { ClaudeProvider, ClaudeError } from "./src/llm/providers/claude.ts";
 export { OpenAIProvider, OpenAIError } from "./src/llm/providers/openai.ts";
+export { GeminiProvider, GeminiError } from "./src/llm/providers/gemini.ts";
+export { MixtralProvider, MixtralError } from "./src/llm/providers/mixtral.ts";
