@@ -1,5 +1,3 @@
-/// <reference lib="deno.ns" />
-
 /**
  * A simple module for chatting with OpenAI
  */
