@@ -1,20 +1,13 @@
 {
   "name": "@paz/lexikon",
-  "version": "0.6.0",
-  "exports": "./mod.ts",
-  "license": "MIT",
-  "imports": {
-    "@std/path": "jsr:@std/path@0.217.0",
-    "@std/fs": "jsr:@std/fs@0.217.0",
-    "@std/flags": "jsr:@std/flags@0.217.0"
-  },
-  "compilerOptions": {
-    "allowJs": true,
-    "strict": true,
-    "lib": ["deno.window", "deno.ns"],
-    "types": ["deno"]
+  "version": "0.7.0",
+  "exports": {
+    ".": "./mod.ts"
   },
   "tasks": {
-    "docs": "deno doc --html --name=Lexikon --output=docs/api mod.ts"
+    "cache": "deno cache mod.ts"
+  },
+  "imports": {
+    "@sinclair/typebox": "npm:@sinclair/typebox@^0.32.35"
   }
 }
