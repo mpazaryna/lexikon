@@ -1,7 +1,9 @@
 /// <reference lib="deno.ns" />
 
 import { assertEquals, assertRejects, assertExists, assert } from "https://deno.land/std@0.217.0/assert/mod.ts";
-import { chat, ClaudeError } from "../src/claude.ts";
+import { ClaudeProvider, ClaudeError } from "../../mod.ts";
+
+const provider = new ClaudeProvider();
 
 Deno.test({
   name: "Environment - ANTHROPIC_API_KEY is set",
@@ -38,7 +40,7 @@ Deno.test({
       
       // Test that chat throws when no key is present
       await assertRejects(
-        () => chat("Hello"),
+        () => provider.chat("Hello"),
         ClaudeError,
         "ANTHROPIC_API_KEY environment variable is not set"
       );
@@ -55,12 +57,12 @@ Deno.test({
   name: "Claude chat - Empty message",
   async fn() {
     await assertRejects(
-      () => chat(""),
+      () => provider.chat(""),
       ClaudeError,
       "Message cannot be empty"
     );
     await assertRejects(
-      () => chat("   "),
+      () => provider.chat("   "),
       ClaudeError,
       "Message cannot be empty"
     );
@@ -71,7 +73,7 @@ Deno.test({
   name: "Claude chat - Basic conversation",
   ignore: !Deno.env.get("ANTHROPIC_API_KEY"), // Skip if no API key is set
   async fn() {
-    const response = await chat("What is 2+2? Reply with just the number.");
+    const response = await provider.chat("What is 2+2? Reply with just the number.");
     assertEquals(response.trim(), "4");
   },
 }); 
