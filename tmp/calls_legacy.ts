@@ -1,12 +1,12 @@
 import { assertEquals } from "https://deno.land/std@0.203.0/testing/asserts.ts";
 import { extractOutline } from "@/extraction/services/outline.ts";
-import { LLMService } from "@/services/llm.ts";
 import { ensureDir } from "https://deno.land/std@0.203.0/fs/ensure_dir.ts";
 import { TEST_CONFIG } from "@/config/test.ts";
 import { OutlineSchema } from "@/schemas/outline.ts";
+import { LLMFactory, LLMProviderType } from "jsr:@paz/lexikon";
 
-// Create LLM service once for all tests
-const llm = new LLMService(TEST_CONFIG.llmModel);
+// Create LLM provider directly using the factory
+const llm = LLMFactory.createProvider(TEST_CONFIG.llmModel as LLMProviderType);
 
 // Read test data once
 const TEST_OUTLINE = await Deno.readTextFile(`${TEST_CONFIG.fixturesDir}/outlines/outline-01.md`);
@@ -133,7 +133,6 @@ Deno.test("Functional Outline Extraction - Basic Functionality", async () => {
 });
 
 Deno.test("Functional Outline Extraction - Error Handling", async () => {
-  // Use same LLM instance
   // Test with empty outline
   try {
     await extractOutline("", TEMPLATE, llm);
@@ -149,4 +148,4 @@ Deno.test("Functional Outline Extraction - Error Handling", async () => {
   } catch (error) {
     assertEquals(error instanceof Error, true);
   }
-}); 
+});
