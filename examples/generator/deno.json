@@ -7,6 +7,6 @@
     "@std/flags": "https://deno.land/std@0.219.0/flags/mod.ts",
     "@std/fs": "https://deno.land/std@0.219.0/fs/mod.ts",
     "@lexikon/module-llm": "../../module-llm/mod.ts",
-    "@lexikon/module-template-generator": "../../module-template-generator/mod.ts"
+    "@lexikon/module-template-generator": "../../module-generator/mod.ts"
   }
 }

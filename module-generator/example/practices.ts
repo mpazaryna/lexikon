@@ -1,7 +1,7 @@
 import { join, dirname, fromFileUrl } from "@std/path";
 import { parse } from "@std/flags";
 import { ensureDir } from "@std/fs";
-import { createGenerator, type GeneratorConfig } from "../module-template-generator/generator.ts";
+import { createGenerator, type GeneratorConfig } from "../module-generator/generator.ts";
 import { createOpenAIClient as llmClient } from "@lexikon/module-llm";
 
 // Content type discriminator

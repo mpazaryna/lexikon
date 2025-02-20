@@ -1,5 +1,5 @@
 {
-  "name": "@lexikon/module-template-generator",
+  "name": "@lexikon/module-generator",
   "version": "0.1.0",
   "exports": "./mod.ts",
   "imports": {
