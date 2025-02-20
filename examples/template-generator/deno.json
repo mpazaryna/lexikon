@@ -1,0 +1,12 @@
+{
+  "tasks": {
+    "start": "deno run --allow-env --allow-net --allow-read --allow-write src/main.ts --config=./data/config/setlist.json"
+  },
+  "imports": {
+    "@std/path": "https://deno.land/std@0.219.0/path/mod.ts",
+    "@std/flags": "https://deno.land/std@0.219.0/flags/mod.ts",
+    "@std/fs": "https://deno.land/std@0.219.0/fs/mod.ts",
+    "@lexikon/module-llm": "../../module-llm/mod.ts",
+    "@lexikon/module-template-generator": "../../module-template-generator/mod.ts"
+  }
+}
