@@ -2,12 +2,17 @@
   "name": "@paz/lexikon",
   "version": "0.9.0",
   "exports": {
-    ".": "./mod.ts"
+    ".": "./module-llm/mod.ts"
   },
   "tasks": {
     "cache": "deno cache mod.ts"
   },
   "imports": {
     "@sinclair/typebox": "npm:@sinclair/typebox@^0.32.35"
+  },
+  "lint": {
+    "rules": {
+      "exclude": ["require-await"]
+    }
   }
 }
