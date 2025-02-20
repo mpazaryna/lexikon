@@ -38,22 +38,23 @@ export function createGenerator(config: GeneratorConfig) {
             content: prompt
           }];
           
+          console.log("Sending to LLM:", prompt);
           const response = await config.llm.complete(messages);
+          
           if (!response?.message?.content) {
             throw new Error("No content received from LLM");
           }
+
+          console.log("LLM Response:", response.message.content);
           return response.message.content;
         },
         config.retryOptions
       );
 
       return {
-        content: config.transforms?.reduce(
-          (acc, transform) => transform(acc), 
-          content
-        ) ?? content,
+        content,
         metadata: {
-          generatedAt: new Date(),
+          generatedAt: new Date()
         }
       };
     }

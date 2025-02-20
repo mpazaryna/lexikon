@@ -2,10 +2,12 @@ import { assertEquals, assertExists } from "std/assert/mod.ts";
 import { join, dirname, fromFileUrl } from "std/path/mod.ts";
 import { createGenerator } from "../../src/generator.ts";
 import { createOpenAIClient } from "@lexikon/module-llm";
+import { writeTestOutput } from "../test_utils.ts";
+import { applyContext } from "../../src/template.ts";
 
 Deno.test({
   name: "end-to-end content generation",
-  ignore: !Deno.env.get("OPENAI_API_KEY"),
+  ignore: !Deno.env.get("OPENROUTER_API_KEY"),
   async fn(t) {
     await t.step("generates content from template", async () => {
       const llm = createOpenAIClient({
@@ -24,6 +26,21 @@ Deno.test({
           attribute: "generated"
         })
         .generate();
+
+      const template = await Deno.readTextFile(templatePath);
+      const processedPrompt = applyContext(template, {
+        name: "E2E Test",
+        type: "test",
+        attribute: "generated"
+      });
+
+      // Write test outputs
+      await writeTestOutput(
+        "basic_template",
+        template,
+        processedPrompt,
+        result.content
+      );
 
       assertEquals(typeof result.content, "string");
       assertEquals(typeof result.metadata.generatedAt, "object");
