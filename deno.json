@@ -1,16 +1,27 @@
 {
   "name": "@paz/lexikon",
   "version": "0.9.0",
-  "exports": {
-    ".": "./module-llm/mod.ts"
-  },
   "tasks": {
-    "cache": "deno cache mod.ts"
+    "test": "deno test --allow-env --allow-net **/tests/**/*_test.ts",
+    "test:coverage": "deno test --coverage=coverage --allow-env --allow-net **/tests/**/*_test.ts",
+    "check": "deno check **/mod.ts",
+    "lint": "deno lint",
+    "fmt": "deno fmt",
+    "cache": "deno cache **/mod.ts"
   },
   "imports": {
+    "@lexikon/module-llm/": "./module-llm/",
+    "@lexikon/module-template-generator/": "./module-template-generator/",
+    "@std/": "https://deno.land/std@0.219.0/",
     "@sinclair/typebox": "npm:@sinclair/typebox@^0.32.35"
   },
+  "fmt": {
+    "include": ["**/*.ts", "**/*.js", "**/*.md", "**/*.json"],
+    "exclude": ["**/node_modules/**", "**/dist/**", "coverage/**"]
+  },
   "lint": {
+    "include": ["**/*.ts"],
+    "exclude": ["**/node_modules/**", "**/dist/**", "coverage/**"],
     "rules": {
       "exclude": ["require-await"]
     }
