@@ -76,10 +76,10 @@ Deno.test("createOpenAIClient", async (t) => {
 
   await t.step("validates model on creation", async () => {
     await assertRejects(
-      async () => createOpenAIClient({
+      () => Promise.reject(createOpenAIClient({
         apiKey: "test-key",
         model: "invalid-model",
-      }),
+      })),
       LLMError,
       "Unsupported OpenAI model"
     );
@@ -158,10 +158,10 @@ Deno.test("createOpenAIClient", async (t) => {
 
   await t.step("API key is required", async () => {
     await assertRejects(
-      async () => createOpenAIClient({
+      () => Promise.reject(createOpenAIClient({
         apiKey: "",
         model: "gpt-3.5-turbo"
-      }),
+      })),
       Error,
       "API key is required"
     );

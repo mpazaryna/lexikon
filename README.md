@@ -134,7 +134,7 @@ lexikon/
 
 MIT License
 
-Copyright (c) 2024 Matt Pazaryna
+Copyright (c) 2024 Matthew Pazaryna
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
