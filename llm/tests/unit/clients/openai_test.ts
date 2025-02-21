@@ -156,6 +156,17 @@ Deno.test("createOpenAIClient", async (t) => {
     );
   });
 
+  await t.step("API key is required", async () => {
+    await assertRejects(
+      async () => createOpenAIClient({
+        apiKey: "",
+        model: "gpt-3.5-turbo"
+      }),
+      Error,
+      "API key is required"
+    );
+  });
+
   // Restore original fetch after all tests
   globalThis.fetch = originalFetch;
 }); 

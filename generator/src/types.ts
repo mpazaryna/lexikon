@@ -1,28 +1,36 @@
 /**
  * Core types for template generation
  */
-export type GeneratorConfig = {
+export interface GeneratorConfig {
   llm: LLMClient;
   retryOptions?: RetryOptions;
   transforms?: Array<(content: string) => string>;
 }
 
-export type GeneratorContext = Record<string, unknown>;
+export interface GeneratorContext {
+  [key: string]: unknown;
+}
 
-export type RetryOptions = {
+export interface RetryOptions {
   maxAttempts?: number;
   delayMs?: number;
   onError?: (error: Error, attempt: number) => void;
   onRetry?: (attempt: number, delay: number) => void;
 }
 
-export type GenerationResult = {
+export interface GenerationResult {
   content: string;
   metadata: {
     generatedAt: Date;
     templateId?: string;
     attempts?: number;
   };
+}
+
+export interface TemplateGenerator {
+  loadTemplate(templatePath: string): Promise<TemplateGenerator>;
+  withContext(ctx: GeneratorContext): TemplateGenerator;
+  generate(): Promise<GenerationResult>;
 }
 
 export interface LLMClient {

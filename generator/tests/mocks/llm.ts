@@ -1,25 +1,18 @@
 import type { MockGeneratorConfig } from "../test_utils.ts";
-import { assertIsError, getErrorMessage } from "../test_utils.ts";
+import { getErrorMessage } from "../test_utils.ts";
 
-export const mockLLMClient = {
-  complete: async (messages: Array<{ role: string; content: string }>) => {
-    // Simple mock that returns different responses based on input
-    const prompt = messages[0].content;
-    
-    if (prompt.includes("error")) {
-      throw new Error("Mock LLM error");
-    }
-
-    return {
+export const mockLLM = {
+  complete: (messages: Array<{ role: string; content: string }>) => {
+    return Promise.resolve({
       message: {
-        content: `Mock response for: ${prompt.slice(0, 50)}...`
+        content: `Mock response for: ${messages[0].content}`
       }
-    };
+    });
   }
 };
 
 export const mockGeneratorConfig: MockGeneratorConfig = {
-  llm: mockLLMClient,
+  llm: mockLLM,
   retryOptions: {
     maxAttempts: 2,
     delayMs: 100,

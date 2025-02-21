@@ -1,15 +1,15 @@
-import { type GeneratorConfig, type GeneratorContext, type GenerationResult } from './types.ts';
+import type { GeneratorConfig, GeneratorContext, GenerationResult, TemplateGenerator } from './types.ts';
 import { loadTemplate, applyContext } from './template.ts';
 import { withRetry } from './utils.ts';
 
 /**
  * Creates a template generator for LLM content generation
  */
-export function createGenerator(config: GeneratorConfig) {
+export function createGenerator(config: GeneratorConfig): TemplateGenerator {
   let template: string | null = null;
   let context: GeneratorContext | null = null;
 
-  const generator = {
+  const generator: TemplateGenerator = {
     async loadTemplate(templatePath: string) {
       console.log("Loading template from:", templatePath);
       template = await loadTemplate(templatePath);

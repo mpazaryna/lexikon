@@ -114,14 +114,13 @@ Deno.test("createOpenRouterClient", async (t) => {
     );
   });
 
-  await t.step("model selection", async () => {
-    shouldFail = false;
+  await t.step("model selection", () => {
     const client = createOpenRouterClient({
-      apiKey: "test-key",
-      model: "openai/gpt-4",
+      apiKey: "test",
+      model: "anthropic/claude-3-sonnet"
     });
-
-    assertEquals(client.getModel(), "openai/gpt-4");
+    
+    assertEquals(client.getModel(), "anthropic/claude-3-sonnet");
   });
 
   await t.step("config updates", async () => {

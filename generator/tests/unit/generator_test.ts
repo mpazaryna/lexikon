@@ -1,4 +1,4 @@
-import { assertEquals, assertRejects } from "std/assert/mod.ts";
+import { assertEquals} from "std/assert/mod.ts";
 import { join, dirname, fromFileUrl } from "std/path/mod.ts";
 import { createGenerator } from "../../src/generator.ts";
 import { mockGeneratorConfig } from "../mocks/llm.ts";
