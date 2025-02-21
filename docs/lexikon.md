@@ -20,12 +20,13 @@ We use the `module-` prefix for all modules, making it clear these are reusable 
 
 ```
 lexikon/
-├── module-llm/           # Core LLM interface
-├── module-prompt/        # Prompt management
-└── future-modules/      # e.g., module-vector, module-cache, etc.
+├── llm/           # Core LLM interface
+├── prompt/        # Prompt management
+└── modules/      # e.g., vector, cache, etc.
 ```
 
 This naming convention:
+
 - Clearly identifies reusable modules
 - Distinguishes from applications
 - Creates a consistent pattern
@@ -67,7 +68,7 @@ Each module has its own `deno.json` for JSR publishing:
 
 ```json
 {
-  "name": "@lexikon/module-llm",
+  "name": "@lexikon/llm",
   "version": "0.1.0",
   "exports": "./mod.ts",
   "tasks": {
@@ -96,14 +97,14 @@ Applications can use the modules either through JSR or local development:
 // Using published versions
 {
   "imports": {
-    "@lexikon/module-llm": "jsr:@lexikon/module-llm@0.1.0"
+    "@lexikon/llm": "jsr:@lexikon/llm@0.1.0"
   }
 }
 
 // Local development
 {
   "imports": {
-    "@lexikon/module-llm": "../module-llm/mod.ts"
+    "@lexikon/llm": "../llm/mod.ts"
   }
 }
 ```
@@ -114,7 +115,7 @@ Applications can use the modules either through JSR or local development:
 
 ```typescript
 // Using a single module
-import { createLLMClient } from "@lexikon/module-llm";
+import { createLLMClient } from "@lexikon/llm";
 
 const client = createLLMClient("claude", {
   apiKey: Deno.env.get("ANTHROPIC_API_KEY"),
@@ -126,8 +127,8 @@ const client = createLLMClient("claude", {
 
 ```typescript
 // Using multiple modules together
-import { createLLMClient } from "@lexikon/module-llm";
-import { PromptStack } from "@lexikon/module-prompt";
+import { createLLMClient } from "@lexikon/llm";
+import { PromptStack } from "@lexikon/prompt";
 
 const prompt = new PromptStack()
   .addTemplate("system/base.md")
@@ -157,17 +158,17 @@ const response = await llm.complete({
 
 Potential future modules following the same pattern:
 
-1. **module-vector**
+1. **vector**
    - Vector storage and operations
    - Embedding management
    - Similarity search
 
-2. **module-cache**
+2. **cache**
    - LLM response caching
    - Token usage tracking
    - Cache invalidation
 
-3. **module-eval**
+3. **eval**
    - Response evaluation
    - Quality metrics
    - Performance tracking
