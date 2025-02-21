@@ -1,8 +1,8 @@
 import { join, dirname, fromFileUrl } from "@std/path";
 import { parse } from "@std/flags";
 import { ensureDir } from "@std/fs";
-import { createGenerator } from "@lexikon/module-template-generator";
-import { createOpenAIClient } from "@lexikon/module-llm";
+import { createGenerator } from "@lexikon/generator";
+import { createOpenAIClient } from "@lexikon/llm";
 
 interface YogaSequence {
   name: string;

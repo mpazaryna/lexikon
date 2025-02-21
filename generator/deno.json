@@ -1,18 +1,18 @@
 {
-  "name": "@lexikon/module-generator",
+  "name": "@lexikon/generator",
   "version": "0.1.0",
   "exports": "./mod.ts",
   "imports": {
-    "@lexikon/module-llm": "../module-llm/mod.ts",
+    "@lexikon/llm": "../llm/mod.ts",
     "std/": "https://deno.land/std@0.220.1/",
     "@std/path": "https://deno.land/std@0.220.1/path/mod.ts",
     "@std/fs": "https://deno.land/std@0.220.1/fs/mod.ts",
     "@std/flags": "https://deno.land/std@0.220.1/flags/mod.ts"
   },
   "tasks": {
-    "test": "deno test --allow-env --allow-read",
-    "test:watch": "deno test --allow-env --allow-read --watch",
-    "test:coverage": "deno test --allow-env --allow-read --coverage=coverage",
+    "test": "deno test --allow-env --allow-read --allow-write --allow-net",
+    "test:watch": "deno test --allow-env --allow-read --allow-write --allow-net --watch",
+    "test:coverage": "deno test --allow-env --allow-read --allow-write --allow-net --coverage=coverage",
     "check": "deno check mod.ts",
     "lint": "deno lint"
   },

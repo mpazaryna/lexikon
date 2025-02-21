@@ -5,13 +5,13 @@ A Deno module for interacting with various LLM providers (Claude, Gemini) with a
 ## Installation
 
 ```ts
-import { createLLMClient } from 'module-llm'
+import { createLLMClient } from 'llm'
 ```
 
 ## Basic Usage
 
 ```ts
-import { createLLMClient } from 'module-llm'
+import { createLLMClient } from 'llm'
 
 const client = createLLMClient('claude', {
   apiKey: 'your-api-key',
@@ -54,7 +54,7 @@ export LLM_LOG_LEVEL=error  # Show only errors
 You can integrate the module's logs with your application's logging system by adding custom handlers:
 
 ```ts
-import { logger, type LogEvent } from 'module-llm'
+import { logger, type LogEvent } from 'llm'
 
 // Example: Send logs to a logging service
 logger.addHandler((event: LogEvent) => {

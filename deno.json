@@ -10,8 +10,8 @@
     "cache": "deno cache **/mod.ts"
   },
   "imports": {
-    "@lexikon/module-llm/": "./module-llm/",
-    "@lexikon/module-template-generator/": "./module-template-generator/",
+    "@lexikon/llm/": "./llm/",
+    "@lexikon/generator/": "./generator/",
     "@std/": "https://deno.land/std@0.219.0/",
     "@sinclair/typebox": "npm:@sinclair/typebox@^0.32.35"
   },

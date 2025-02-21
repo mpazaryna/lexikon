@@ -1,6 +1,6 @@
 import { assertEquals, assertRejects } from "std/assert/mod.ts";
 import { createGenerator } from "../../src/generator.ts";
-import { createOpenAIClient } from "@lexikon/module-llm";
+import { createOpenAIClient } from "@lexikon/llm";
 
 Deno.test({
   name: "LLM integration test",

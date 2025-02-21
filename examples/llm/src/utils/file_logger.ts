@@ -1,6 +1,6 @@
 import { ensureDirSync } from "https://deno.land/std@0.208.0/fs/ensure_dir.ts";
 import { join } from "https://deno.land/std@0.208.0/path/mod.ts";
-import type { LogEvent } from "module-llm/mod.ts";
+import type { LogEvent } from "llm/mod.ts";
 
 // Ensure logs directory exists
 const LOGS_DIR = "./logs";

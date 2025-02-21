@@ -1,7 +1,7 @@
 import { assertEquals, assertExists } from "std/assert/mod.ts";
 import { join, dirname, fromFileUrl } from "std/path/mod.ts";
 import { createGenerator } from "../../src/generator.ts";
-import { createOpenAIClient } from "@lexikon/module-llm";
+import { createOpenAIClient } from "@lexikon/llm";
 import { writeTestOutput } from "../test_utils.ts";
 import { applyContext } from "../../src/template.ts";
 

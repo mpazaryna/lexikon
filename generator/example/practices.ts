@@ -1,8 +1,8 @@
 import { join, dirname, fromFileUrl } from "@std/path";
 import { parse } from "@std/flags";
 import { ensureDir } from "@std/fs";
-import { createGenerator, type GeneratorConfig } from "../module-generator/generator.ts";
-import { createOpenAIClient as llmClient } from "@lexikon/module-llm";
+import { createGenerator, type GeneratorConfig } from "../generator/generator.ts";
+import { createOpenAIClient as llmClient } from "@lexikon/llm";
 
 // Content type discriminator
 type ContentType = 'yoga' | 'dharma';

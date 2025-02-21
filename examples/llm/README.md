@@ -1,4 +1,4 @@
-# Implementation of module-llm
+# Implementation of llm
 
 ```bash
 deno task start
