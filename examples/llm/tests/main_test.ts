@@ -2,9 +2,9 @@ import { assertEquals } from 'https://deno.land/std@0.208.0/assert/mod.ts';
 import {
   createLLMClient,
   type LLMConfig,
-} from '@lexikon/module-llm';
+} from '@lexikon/llm';
 
-Deno.test('module-llm integration - Claude client creation', () => {
+Deno.test('llm integration - Claude client creation', () => {
   const config: LLMConfig = {
     apiKey: 'test-key',
     model: 'claude-3-sonnet-20240229',
@@ -14,7 +14,7 @@ Deno.test('module-llm integration - Claude client creation', () => {
   assertEquals(typeof client.complete, 'function');
 });
 
-Deno.test('module-llm integration - Gemini client creation', () => {
+Deno.test('llm integration - Gemini client creation', () => {
   const config: LLMConfig = {
     apiKey: 'test-key',
     model: 'gemini-pro',

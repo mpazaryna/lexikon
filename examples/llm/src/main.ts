@@ -7,7 +7,7 @@ import {
   type LLMConfig,
   logger,
   type LogEvent,
-} from '@lexikon/module-llm';
+} from '@lexikon/llm';
 import { createDailyRotatingFileLogger } from './utils/file_logger.ts';
 
 // Example custom log handler that formats logs nicely for console

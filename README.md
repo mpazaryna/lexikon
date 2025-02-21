@@ -1,8 +1,19 @@
-# Lexikon: A Language Model Interface Framework
+# Lexikon: A Modular LLM Development Toolkit
 
 [![Deno](https://github.com/mpazaryna/lexikon/actions/workflows/deno.yml/badge.svg)](https://github.com/mpazaryna/lexikon/actions/workflows/deno.yml)
 
 <img src="/assets/logo.jpeg" width="500" alt="Lexikon Logo">
+
+## Portfolio Notice
+
+**Important**: This repository is shared primarily as a portfolio piece and reference implementation. It represents tools I've built for my own development workflow and is not actively maintained for public use. While you're welcome to fork and use this code under the terms of the license, please note:
+
+- This is not an actively maintained open source project
+- I am not seeking contributions or feature requests
+- Issues and pull requests will not be regularly monitored
+- No guarantees of support or updates are provided
+
+Feel free to use this as inspiration or reference for your own projects.
 
 ## Background
 
@@ -39,60 +50,106 @@ While LangChain is a powerful framework, it often introduces unnecessary complex
 - **Minimal Dependencies**: Lightweight implementation with essential features only
 - **Standard Interface**: Consistent API across different LLM providers
 
+## Module Structure
+
+Lexikon is a monorepo housing a collection of independent, focused modules for LLM application development. Each module is designed to be independently publishable to JSR (Deno's package registry) while maintaining the ability to work seamlessly together.
+
+### Core Philosophy
+
+1. **Independent Modules**: Each module does one thing and does it well
+2. **Composable Design**: Modules can be used independently or together
+3. **Consistent Patterns**: Similar structure and interfaces across modules
+4. **Clear Boundaries**: Each module has a distinct responsibility
+5. **Developer-First**: Easy to use, test, and maintain
+
+### Module Organization
+
+Each module follows a consistent structure:
+
+```
+llm/
+├── mod.ts              # Main entry point
+├── src/               # Source code
+│   ├── clients/       # Module-specific implementations
+│   ├── utils/         # Module-specific utilities
+│   └── types.ts       # Module-specific types
+├── tests/             # Module-specific tests
+├── examples/          # Usage examples
+├── README.md          # Module documentation
+└── deno.json         # Module configuration
+```
+
 ## Features
 
 - Multiple LLM Provider Support:
   - Claude (Anthropic)
   - GPT-4 (OpenAI)
   - Mixtral (Groq)
-  - More coming soon...
 - Context Management
 - File Handling
 - Response Processing
 - Error Management
 
-## Usage
+## Usage Examples
+
+### Direct Module Usage
 
 ```typescript
-import { createProvider } from "@lexikon/core";
+// Using a single module
+import { createLLMClient } from "@lexikon/llm";
 
-const llm = createProvider("claude", { temperature: 0.7 });
-const response = await llm.generateContent("Your prompt here");
+const client = createLLMClient("claude", {
+  apiKey: Deno.env.get("ANTHROPIC_API_KEY"),
+  model: "claude-3-sonnet-20240229"
+});
 ```
 
-## Examples
+### Composing Modules
 
-The repository includes example implementations:
+```typescript
+// Using multiple modules together
+import { createLLMClient } from "@lexikon/llm";
+import { PromptStack } from "@lexikon/prompt";
 
-- Story Generation
-- Yoga Sequence Creation
+const prompt = new PromptStack()
+  .addTemplate("system/base.md")
+  .withVariables({ role: "assistant" });
+
+const llm = createLLMClient("claude");
+const response = await llm.complete({
+  prompt: await prompt.compose()
+});
+```
 
 ## Project Structure
 
-```ascii
-lexikon/
-├── core/
-│   ├── llm/
-│   │   ├── types.ts
-│   │   ├── factory.ts
-│   │   └── providers/
-│   └── context/
-│       └── handler.ts
-└── examples/
-    ├── story/
-    └── yoga/
 ```
-
-## Philosophy
-
-Lexikon is built on three core principles:
-
-1. **Simplicity**: Each component should do one thing well
-2. **Standardization**: Consistent interface across providers
-3. **Extensibility**: Easy to add new providers and features
-
-Like ODBC drivers of the past, Lexikon aims to be the standard interface between applications and language models, providing a clean, consistent API while handling the complexity of different provider implementations.
+lexikon/
+├── llm/           # Core LLM interface
+├── prompt/        # Prompt management
+└── modules/       # e.g., vector, cache, etc.
+```
 
 ## License
 
-Proprietary License
+MIT License
+
+Copyright (c) 2024 Matt Pazaryna
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
