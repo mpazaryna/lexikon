@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+
+# Deno
+.deno/
+deno.lock
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE / Editor
+.vscode/
+.idea/
+*.code-workspace
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build / Output
+dist/
+build/
+output/*
+!output/README.md
+
+# Generated documentation
+docs/api/*
+!docs/api/README.md
+
+# Test coverage
+coverage/
+.coverage/
+*.lcov
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+temp.txt
+*.tmp
+*.temp
+.cache/
+
+# API keys / Secrets (extra safety)
+*.pem
+*.key
+credentials.json
+secrets.json
